@@ -10,16 +10,16 @@ export function WorkList({ locale }: { locale: Locale }) {
   if (works.length === 0) return <div className="flex-1" />;
 
   return (
-    <div className="relative z-2 flex flex-1 flex-col gap-y-1 rounded-3xl bg-light-1 p-1.5">
+    <div className="relative z-2 flex flex-1 flex-col gap-y-1 rounded-plate bg-light-1 p-1.5">
       {works.map((work, index) => {
         const Tag = work.url ? "a" : "article";
         return (
           <Tag
             key={work.id}
             {...(work.url ? { href: work.url, target: "_blank", rel: "noreferrer" } : {})}
-            className="group flex gap-x-3 rounded-[1.125rem] border border-light-2 bg-light-2 p-2.5 text-dark-1 transition-colors duration-100 hover:border-accent/40 hover:bg-accent/10"
+            className="group flex gap-x-3 rounded-plate border border-light-2 bg-light-2 p-2.5 text-dark-1 transition-colors duration-100 hover:border-accent/40 hover:bg-accent/10"
           >
-            <div className="size-18 shrink-0 overflow-hidden rounded-lg">
+            <div className="size-18 shrink-0 overflow-hidden rounded-plate">
               {work.thumb ? (
                 <MediaView
                   media={work.thumb}

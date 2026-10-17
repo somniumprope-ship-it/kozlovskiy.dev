@@ -67,7 +67,7 @@ function TileView({ tile, index }: { tile: Tile | null; index: number }) {
   return (
     <Tag
       {...(tile?.url ? { href: tile.url, target: "_blank", rel: "noreferrer" } : {})}
-      className="group relative block w-full overflow-hidden rounded-[1.125rem] bg-light-2"
+      className="group relative block w-full overflow-hidden rounded-plate bg-light-2"
       style={{ aspectRatio: ratio }}
     >
       {tile ? (
@@ -177,12 +177,12 @@ export const Stage = memo(function Stage({ right, title }: { right: Right; title
   );
 
   return (
-    <section className="flex h-full min-h-0 w-full min-w-0 flex-col rounded-3xl bg-light-1 p-1.5">
-      <div className="mb-1.5 w-fit shrink-0 rounded-full bg-light-2 px-3 py-1.5 text-base leading-6 text-dark-1">
+    <section className="flex h-full min-h-0 w-full min-w-0 flex-col rounded-plate bg-light-1 p-1.5">
+      <div className="mb-1.5 w-fit shrink-0 rounded-plate bg-light-2 px-3 py-1 text-base leading-6 text-dark-1">
         {title}
       </div>
 
-      <div className="relative min-h-0 flex-1 overflow-hidden rounded-[1.125rem]">
+      <div className="relative min-h-0 flex-1 overflow-hidden rounded-plate">
         {isDesktop ? <Grid items={items} /> : <Slideshow items={items} seconds={right.autoplaySeconds} />}
       </div>
     </section>

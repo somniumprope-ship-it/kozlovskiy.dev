@@ -29,12 +29,12 @@ export function ContactCard({ locale, visible }: Props) {
   return (
     <form
       onSubmit={submit}
-      className={`${visible ? "flex" : "hidden"} z-20 col-start-1 row-start-2 min-h-0 flex-col justify-between rounded-3xl bg-dark-1 p-4 lg:fixed lg:right-7 lg:bottom-7 lg:w-120 lg:max-w-[calc(100vw-2rem)] lg:gap-5`}
+      className={`${visible ? "flex" : "hidden"} z-20 col-start-1 row-start-2 min-h-0 flex-col justify-between rounded-plate bg-dark-1 p-4 lg:fixed lg:right-7 lg:bottom-7 lg:w-120 lg:max-w-[calc(100vw-2rem)] lg:gap-5`}
     >
       <p className="mt-5 text-[1.25rem] leading-[1.15] text-light-1">{pick(contact.text, locale)}</p>
 
       <div>
-        <div className="relative rounded-full bg-light-1 py-3.25 pr-2 pl-4">
+        <div className="relative rounded-plate bg-light-1 py-3.25 pr-2 pl-4">
           <label className="sr-only" htmlFor="email">
             {pick(contact.placeholder, locale)}
           </label>
@@ -53,7 +53,7 @@ export function ContactCard({ locale, visible }: Props) {
           <button
             type="submit"
             disabled={status === "sending"}
-            className="absolute top-1.5 right-1.5 rounded-full bg-accent px-4 py-2 text-base text-dark-1 disabled:opacity-60"
+            className="absolute top-1.5 right-1.5 rounded-plate bg-accent px-4 py-2 text-base text-dark-1 disabled:opacity-60"
           >
             {pick(contact.button, locale)}
           </button>

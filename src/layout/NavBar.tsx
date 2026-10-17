@@ -19,7 +19,7 @@ export function NavBar({ view, onView, locale, nav }: Props) {
   const items: View[] = ["info", "playground"];
 
   return (
-    <nav className="relative z-2 flex h-11 items-center justify-between rounded-full bg-light-1 py-1.5 pr-1.5 pl-4">
+    <nav className="relative z-2 flex h-11 items-center justify-between rounded-plate bg-light-1 py-1.5 pr-1.5 pl-4">
       <button
         type="button"
         aria-label="Home"
@@ -37,7 +37,7 @@ export function NavBar({ view, onView, locale, nav }: Props) {
             data-view={item}
             aria-current={view === item ? "page" : undefined}
             onClick={() => onView(item)}
-            className={`items-center rounded-full px-3 py-1.5 text-base leading-6 text-dark-1 transition-colors duration-200 ${
+            className={`items-center rounded-plate px-3 py-1 text-base leading-6 text-dark-1 transition-colors duration-200 ${
               view === item ? "bg-light-2" : "hover:bg-light-2/60"
             } ${item === "playground" ? "flex lg:hidden" : "flex"}`}
           >

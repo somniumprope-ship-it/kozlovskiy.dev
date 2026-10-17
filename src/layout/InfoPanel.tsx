@@ -15,10 +15,10 @@ export function InfoPanel({ locale, onLocale }: Props) {
   const zone = zoneLabel(left.timezone);
 
   return (
-    <article className="flex w-full flex-col gap-y-11 rounded-3xl bg-light-1 p-4 lg:gap-y-22">
+    <article className="flex w-full flex-col gap-y-11 rounded-plate bg-light-1 p-4 lg:gap-y-22">
       <div className="flex items-start justify-between">
         <div className="flex items-start gap-3">
-          <div className="size-30 shrink-0 overflow-hidden rounded-[0.6875rem] lg:size-38">
+          <div className="size-30 shrink-0 overflow-hidden rounded-plate lg:size-38">
             {left.avatar ? (
               <MediaView media={left.avatar} eager className="size-full object-cover" />
             ) : (
