@@ -126,6 +126,66 @@
   "right": {
     "title": "Playground",
     "autoplaySeconds": 5,
-    "tiles": []
+    "tiles": [
+      {
+        "id": "t1",
+        "media": {
+          "src": "/sample/cover.svg",
+          "type": "image",
+          "w": 1200,
+          "h": 900
+        },
+        "caption": "Проект 01",
+        "url": "",
+        "project": {
+          "title": {
+            "ru": "Проект 01",
+            "en": "Project 01"
+          },
+          "body": {
+            "ru": "Коротко о проекте: задача клиента, моя роль и результат. Замените этот текст в админке — вкладка «Правая часть».",
+            "en": "A short note on the project: the client's problem, my role and the outcome. Replace this text in the admin — «Right side» tab."
+          },
+          "gallery": [
+            {
+              "src": "/sample/g1.svg",
+              "type": "image",
+              "w": 900,
+              "h": 900
+            },
+            {
+              "src": "/sample/g2.svg",
+              "type": "image",
+              "w": 900,
+              "h": 900
+            },
+            {
+              "src": "/sample/g3.svg",
+              "type": "image",
+              "w": 900,
+              "h": 900
+            },
+            {
+              "src": "/sample/g4.svg",
+              "type": "image",
+              "w": 900,
+              "h": 900
+            },
+            {
+              "src": "/sample/g5.svg",
+              "type": "image",
+              "w": 900,
+              "h": 900
+            },
+            {
+              "src": "/sample/g6.svg",
+              "type": "image",
+              "w": 900,
+              "h": 900
+            }
+          ]
+        }
+      }
+    ]
   }
 }

@@ -92,7 +92,7 @@ export function Marquee() {
   const textHalf = Array.from({ length: repeat }, () => marquee).flat();
 
   return (
-    <div className="relative z-2 flex h-14 shrink-0 items-center overflow-hidden rounded-plate bg-light-1" aria-hidden>
+    <div data-intro-left data-leave className="relative z-2 flex h-14 shrink-0 items-center overflow-hidden rounded-plate bg-light-1" aria-hidden>
       <div ref={trackRef} className="marquee-track flex">
         {[0, 1].map((n) => (
           <div

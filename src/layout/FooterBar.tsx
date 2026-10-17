@@ -4,7 +4,7 @@ export function FooterBar({ onContact }: { onContact: () => void }) {
   const { email, emailButton: btn, socials } = useContent().left;
 
   return (
-    <div className="relative z-2 flex shrink-0 flex-wrap items-center justify-between gap-3 rounded-plate bg-light-1 p-4">
+    <div data-intro-left data-leave className="relative z-2 flex shrink-0 flex-wrap items-center justify-between gap-3 rounded-plate bg-light-1 p-4">
       <button
         type="button"
         onClick={onContact}

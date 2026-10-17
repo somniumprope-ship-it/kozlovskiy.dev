@@ -1,5 +1,7 @@
-import { memo, useEffect, useMemo, useRef, useState, type PointerEvent } from "react";
-import type { Content, Media, Tile } from "../content/types";
+import gsap from "gsap";
+import { memo, useEffect, useLayoutEffect, useMemo, useRef, useState, type PointerEvent } from "react";
+import type { Content, Locale, Media, Tile } from "../content/types";
+import { pick } from "../lib/pick";
 import { useIsDesktop } from "../engine/useIsDesktop";
 import { useSmoothScroll } from "../engine/useSmoothScroll";
 import { MediaView } from "./Media";
@@ -31,7 +33,7 @@ function Placeholder({ index }: { index: number }) {
 }
 
 /** Десктоп: 3 колонки, плитка уходит в самую короткую — так колонки выравниваются, а порядок остаётся читаемым. */
-function Grid({ items }: { items: Item[] }) {
+function Grid({ items, onOpen }: { items: Item[]; onOpen: (id: string) => void }) {
   const { wrapperRef, contentRef } = useSmoothScroll<HTMLDivElement>();
 
   const columns = useMemo(() => {
@@ -52,7 +54,7 @@ function Grid({ items }: { items: Item[] }) {
         {columns.map((col, c) => (
           <div key={c} className="flex min-w-0 flex-1 flex-col gap-2">
             {col.map(({ tile, index }) => (
-              <TileView key={tile?.id ?? `p${index}`} tile={tile} index={index} />
+              <TileView key={tile?.id ?? `p${index}`} tile={tile} index={index} onOpen={onOpen} />
             ))}
           </div>
         ))}
@@ -61,13 +63,18 @@ function Grid({ items }: { items: Item[] }) {
   );
 }
 
-function TileView({ tile, index }: { tile: Tile | null; index: number }) {
+function TileView({ tile, index, onOpen }: { tile: Tile | null; index: number; onOpen: (id: string) => void }) {
   const ratio = tile ? ratioOf(tile.media, 4 / 3) : ratios[index % ratios.length];
-  const Tag = tile?.url ? "a" : "div";
+  const opens = !!tile?.project;
+  const Tag = opens ? "button" : tile?.url ? "a" : "div";
   return (
     <Tag
-      {...(tile?.url ? { href: tile.url, target: "_blank", rel: "noreferrer" } : {})}
-      className="group relative block w-full overflow-hidden rounded-plate bg-light-2"
+      {...(opens
+        ? { type: "button" as const, onClick: () => onOpen(tile!.id) }
+        : tile?.url
+          ? { href: tile.url, target: "_blank", rel: "noreferrer" }
+          : {})}
+      className={`group relative block w-full overflow-hidden rounded-plate bg-light-2 text-left ${opens ? "cursor-pointer" : ""}`}
       style={{ aspectRatio: ratio }}
     >
       {tile ? (
@@ -88,7 +95,7 @@ function TileView({ tile, index }: { tile: Tile | null; index: number }) {
 }
 
 /** Мобильный: один слот на весь экран. Тап/свайп — следующий, плюс автосмена. Скролла нет. */
-function Slideshow({ items, seconds }: { items: Item[]; seconds: number }) {
+function Slideshow({ items, seconds, onOpen, locale }: { items: Item[]; seconds: number; onOpen: (id: string) => void; locale: Locale }) {
   const [i, setI] = useState(0);
   const [visible, setVisible] = useState(true);
   const rootRef = useRef<HTMLDivElement | null>(null);
@@ -147,6 +154,18 @@ function Slideshow({ items, seconds }: { items: Item[]; seconds: number }) {
         </div>
       ))}
 
+      {items[i]?.tile?.project ? (
+        <button
+          type="button"
+          onPointerDown={(e) => e.stopPropagation()}
+          onPointerUp={(e) => e.stopPropagation()}
+          onClick={() => onOpen(items[i].tile!.id)}
+          className="absolute top-3 right-3 rounded-plate bg-light-1 px-3 py-1 text-base leading-6 text-dark-1"
+        >
+          {locale === "ru" ? "Подробнее" : "Details"}
+        </button>
+      ) : null}
+
       {count > 1 ? (
         <div className="pointer-events-none absolute inset-x-0 bottom-3 flex justify-center gap-1.5">
           {items.map((_, n) => (
@@ -161,29 +180,107 @@ function Slideshow({ items, seconds }: { items: Item[]; seconds: number }) {
   );
 }
 
-/**
- * Правая часть. Зависит ТОЛЬКО от `right` из контента (memo) — переключатели слева её не трогают:
- * ни ремонта, ни повторных анимаций, ни перезапуска видео и скролла.
- */
-export const Stage = memo(function Stage({ right, title }: { right: Right; title: string }) {
-  const isDesktop = useIsDesktop();
+type StageProps = {
+  right: Right;
+  title: string;
+  locale: Locale;
+  openId: string | null;
+  onOpen: (id: string) => void;
+  onClose: () => void;
+};
 
-  const items = useMemo<Item[]>(
-    () =>
-      right.tiles.length > 0
-        ? right.tiles.map((tile, index) => ({ tile, index }))
-        : Array.from({ length: 9 }, (_, index) => ({ tile: null, index })),
-    [right.tiles],
-  );
+/** Страница проекта: те же квадратики, что и на главной, пока без финальной сетки. */
+function ProjectGallery({ tile, locale, desktop }: { tile: Tile; locale: Locale; desktop: boolean }) {
+  const { wrapperRef, contentRef } = useSmoothScroll<HTMLDivElement>();
+  const project = tile.project!;
+  const gallery = project.gallery.length ? project.gallery : [tile.media];
 
   return (
-    <section className="flex h-full min-h-0 w-full min-w-0 flex-col rounded-plate bg-light-1 p-1.5">
-      <div className="mb-1.5 w-fit shrink-0 rounded-plate bg-light-2 px-3 py-1 text-base leading-6 text-dark-1">
-        {title}
+    <div ref={wrapperRef} data-scroll="right" className="h-full overflow-y-auto overscroll-contain">
+      <div ref={contentRef} className="flex flex-col gap-2">
+        {!desktop ? (
+          <p className="px-1 pt-1 text-base leading-6 whitespace-pre-line text-dark-1">{pick(project.body, locale)}</p>
+        ) : null}
+        <div className="grid grid-cols-2 gap-2 lg:grid-cols-3">
+          {gallery.map((m, n) => (
+            <div key={n} className="aspect-square overflow-hidden rounded-plate bg-light-2">
+              <MediaView media={m} className="size-full object-cover" />
+            </div>
+          ))}
+        </div>
       </div>
+    </div>
+  );
+}
+
+/**
+ * Правая часть. Зависит только от `right`, языка и открытого проекта (memo) — переключатели слева её не трогают.
+ * Открытие проекта: сетка уезжает влево и гаснет, галерея проекта выезжает справа.
+ */
+export const Stage = memo(function Stage({ right, title, locale, openId, onOpen, onClose }: StageProps) {
+  const isDesktop = useIsDesktop();
+  const bodyRef = useRef<HTMLDivElement | null>(null);
+  const openTile = right.tiles.find((t) => t.id === openId && t.project) ?? null;
+  const [shownId, setShownId] = useState<string | null>(openTile?.id ?? null);
+  const shown = right.tiles.find((t) => t.id === shownId && t.project) ?? null;
+  const first = useRef(true);
+
+  const items = useMemo<Item[]>(() => {
+    const real = right.tiles.map((tile, index) => ({ tile, index }));
+    // пока карточек мало, добиваем сетку заглушками, чтобы был виден ритм
+    const pad = Math.max(0, 9 - real.length);
+    return [...real, ...Array.from({ length: pad }, (_, k) => ({ tile: null, index: real.length + k }))];
+  }, [right.tiles]);
+
+  useEffect(() => {
+    if ((openTile?.id ?? null) === shownId) return;
+    const el = bodyRef.current;
+    if (!el) return setShownId(openTile?.id ?? null);
+    const tween = gsap.to(el, {
+      opacity: 0,
+      x: openTile ? -40 : 40,
+      duration: 0.25,
+      ease: "power2.in",
+      onComplete: () => setShownId(openTile?.id ?? null),
+    });
+    return () => void tween.kill();
+  }, [openTile, shownId]);
+
+  useLayoutEffect(() => {
+    if (first.current) {
+      first.current = false;
+      return;
+    }
+    if (bodyRef.current) gsap.fromTo(bodyRef.current, { opacity: 0, x: shownId ? 60 : -60 }, { opacity: 1, x: 0, duration: 0.5, ease: "power3.out" });
+  }, [shownId]);
+
+  const heading = shown ? pick(shown.project!.title, locale) : title;
+
+  return (
+    <section data-intro-right className="flex h-full min-h-0 w-full min-w-0 flex-col rounded-plate bg-light-1 p-1.5">
+      {shown ? (
+        <button
+          type="button"
+          onClick={onClose}
+          className="mb-1.5 flex w-fit shrink-0 items-center gap-2 rounded-plate bg-light-2 px-3 py-1 text-base leading-6 text-dark-1 transition-opacity hover:opacity-70"
+        >
+          <span aria-hidden>←</span>
+          {heading}
+        </button>
+      ) : (
+        <div className="mb-1.5 w-fit shrink-0 rounded-plate bg-light-2 px-3 py-1 text-base leading-6 text-dark-1">{heading}</div>
+      )}
 
       <div className="relative min-h-0 flex-1 overflow-hidden rounded-plate">
-        {isDesktop ? <Grid items={items} /> : <Slideshow items={items} seconds={right.autoplaySeconds} />}
+        <div ref={bodyRef} className="size-full">
+          {shown ? (
+            <ProjectGallery key={shown.id} tile={shown} locale={locale} desktop={isDesktop} />
+          ) : isDesktop ? (
+            <Grid items={items} onOpen={onOpen} />
+          ) : (
+            <Slideshow items={items} seconds={right.autoplaySeconds} onOpen={onOpen} locale={locale} />
+          )}
+        </div>
       </div>
     </section>
   );

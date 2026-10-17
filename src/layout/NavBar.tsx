@@ -21,7 +21,7 @@ export function NavBar({ view, onView, locale, nav, desktop }: Props) {
   const items: View[] = ["info", "playground"];
 
   return (
-    <nav className="relative z-2 flex h-11 items-center justify-between rounded-plate bg-light-1 py-1.5 pr-1.5 pl-4">
+    <nav data-intro-left className="relative z-2 flex h-11 items-center justify-between rounded-plate bg-light-1 py-1.5 pr-1.5 pl-4">
       <button
         type="button"
         aria-label="Home"

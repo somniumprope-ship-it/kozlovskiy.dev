@@ -18,11 +18,15 @@ export type Work = {
 
 export type Social = { id: string; label: string; url: string };
 
+export type Project = { title: Loc; body: Loc; gallery: Media[] };
+
 export type Tile = {
   id: string;
   media: Media;
   caption: string;
   url: string;
+  /** Если задан — карточка открывает страницу проекта */
+  project?: Project;
 };
 
 export type Content = {

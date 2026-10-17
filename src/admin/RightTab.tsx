@@ -1,9 +1,49 @@
 import { useRef, useState, type DragEvent } from "react";
-import type { Content } from "../content/types";
+import type { Content, Media } from "../content/types";
 import { uploadFiles } from "../lib/api";
-import { btn, errorText, Field, move, Preview, RowTools, Section, Text, uid } from "./fields";
+import { btn, errorText, Field, LocField, move, Preview, RowTools, Section, Text, uid } from "./fields";
 
 type Props = { draft: Content; edit: (fn: (d: Content) => void) => void };
+
+/** Галерея проекта: загрузка нескольких файлов и список миниатюр с удалением. */
+function Gallery({ items, onAdd, onRemove }: { items: Media[]; onAdd: (m: Media[]) => void; onRemove: (n: number) => void }) {
+  const ref = useRef<HTMLInputElement | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+  const pick = async (files: FileList | null) => {
+    if (!files?.length) return;
+    setBusy(true);
+    setErr("");
+    try {
+      onAdd(await uploadFiles(Array.from(files)));
+    } catch (e) {
+      setErr(errorText(e));
+    } finally {
+      setBusy(false);
+      if (ref.current) ref.current.value = "";
+    }
+  };
+  return (
+    <div className="flex flex-col gap-2">
+      <span className="font-medium">Галерея проекта</span>
+      <div className="grid grid-cols-4 gap-2">
+        {items.map((m, n) => (
+          <div key={n} className="relative aspect-square overflow-hidden rounded-lg bg-white">
+            <Preview media={m} className="size-full object-cover" />
+            <button type="button" aria-label="Удалить" className="absolute top-1 right-1 rounded-full bg-white/90 px-1.5 text-xs" onClick={() => onRemove(n)}>
+              ✕
+            </button>
+          </div>
+        ))}
+      </div>
+      <button type="button" className={`${btn} self-start`} disabled={busy} onClick={() => ref.current?.click()}>
+        {busy ? "Загрузка…" : "+ Добавить в галерею"}
+      </button>
+      <input ref={ref} type="file" multiple hidden accept="image/*,video/mp4,video/webm" onChange={(e) => pick(e.target.files)} />
+      {err ? <span className="text-xs text-red-600">{err}</span> : null}
+    </div>
+  );
+}
 
 export function RightTab({ draft, edit }: Props) {
   const r = draft.right;
@@ -104,6 +144,36 @@ export function RightTab({ draft, edit }: Props) {
                 </div>
                 <Text value={t.caption} placeholder="Подпись (необязательно)" onChange={(v) => edit((d) => void (d.right.tiles[i].caption = v))} />
                 <Text value={t.url} placeholder="Ссылка (необязательно)" onChange={(v) => edit((d) => void (d.right.tiles[i].url = v))} />
+                <details className="rounded-lg bg-light-2 p-2.5 text-sm" open={!!t.project}>
+                  <summary className="cursor-pointer select-none">Страница проекта {t.project ? "(включена)" : "(выключена)"}</summary>
+                  <div className="mt-3 flex flex-col gap-3">
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={!!t.project}
+                        onChange={(e) =>
+                          edit((d) => {
+                            d.right.tiles[i].project = e.target.checked
+                              ? { title: { ru: d.right.tiles[i].caption, en: d.right.tiles[i].caption }, body: { ru: "", en: "" }, gallery: [] }
+                              : undefined;
+                          })
+                        }
+                      />
+                      Открывать страницу проекта по клику
+                    </label>
+                    {t.project ? (
+                      <>
+                        <LocField label="Название" value={t.project.title} onChange={(v) => edit((d) => void (d.right.tiles[i].project!.title = v))} />
+                        <LocField label="Текст о проекте" multiline rows={5} value={t.project.body} onChange={(v) => edit((d) => void (d.right.tiles[i].project!.body = v))} />
+                        <Gallery
+                          items={t.project.gallery}
+                          onAdd={(m) => edit((d) => void d.right.tiles[i].project!.gallery.push(...m))}
+                          onRemove={(n) => edit((d) => void d.right.tiles[i].project!.gallery.splice(n, 1))}
+                        />
+                      </>
+                    ) : null}
+                  </div>
+                </details>
                 <RowTools
                   index={i}
                   count={r.tiles.length}

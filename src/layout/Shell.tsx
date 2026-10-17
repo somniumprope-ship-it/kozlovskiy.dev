@@ -1,4 +1,5 @@
-import { useCallback, useState } from "react";
+import gsap from "gsap";
+import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import { useContent } from "../content/ContentContext";
 import type { Locale } from "../content/types";
 import { useIsDesktop } from "../engine/useIsDesktop";
@@ -34,7 +35,40 @@ export function Shell() {
   // «Площадка» есть только на мобильном; на десктопе она всегда на экране справа
   const navView: View = isDesktop && view === "playground" ? "info" : view;
 
-  const go = (next: View) => setView(next === navView && next === "contact" ? "info" : next);
+  const [projectId, setProjectId] = useState<string | null>(null);
+  const project = right.tiles.find((t) => t.id === projectId && t.project) ?? null;
+  const openProject = useCallback((id: string) => setProjectId(id), []);
+  const closeProject = useCallback(() => setProjectId(null), []);
+
+  const go = (next: View) => {
+    if (next === "info") setProjectId(null);
+    setView(next === navView && next === "contact" ? "info" : next);
+  };
+
+  // Escape закрывает проект
+  useEffect(() => {
+    if (!projectId) return;
+    const h = (e: KeyboardEvent) => e.key === "Escape" && setProjectId(null);
+    window.addEventListener("keydown", h);
+    return () => window.removeEventListener("keydown", h);
+  }, [projectId]);
+
+  // Загрузка: секции слева выезжают по очереди слева, правая плашка — справа
+  useLayoutEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const ctx = gsap.context(() => {
+      gsap.from("[data-intro-left]", { x: "-110%", duration: 0.7, stagger: 0.09, ease: "power3.out", clearProps: "transform" });
+      gsap.from("[data-intro-right]", { x: "110%", duration: 0.8, delay: 0.1, ease: "power3.out", clearProps: "transform" });
+    });
+    return () => ctx.revert();
+  }, []);
+
+  // Телефон: «Работы» открываются справа
+  useEffect(() => {
+    if (isDesktop || navView !== "playground") return;
+    const tween = gsap.fromTo("[data-intro-right]", { x: "100%" }, { x: 0, duration: 0.5, ease: "power3.out", clearProps: "transform" });
+    return () => void tween.kill();
+  }, [navView, isDesktop]);
 
   return (
     <div className="grid h-svh w-full grid-cols-1 grid-rows-[auto_minmax(0,1fr)] gap-1 overflow-hidden bg-light-3 p-1.5 antialiased lg:grid-cols-[30rem_minmax(0,1fr)] lg:gap-x-1 lg:p-1">
@@ -43,13 +77,19 @@ export function Shell() {
       <div
         className={`${navView === "info" ? "flex" : "hidden lg:flex"} col-start-1 row-start-2 min-h-0 min-w-0`}
       >
-        <InfoPane locale={locale} onLocale={setLocale} onContact={() => go("contact")} />
+        <InfoPane
+          locale={locale}
+          onLocale={setLocale}
+          onContact={() => go("contact")}
+          project={isDesktop ? project : null}
+          onCloseProject={closeProject}
+        />
       </div>
 
       <div
         className={`${navView === "playground" ? "flex" : "hidden lg:flex"} col-start-1 row-start-2 min-h-0 min-w-0 lg:col-start-2 lg:row-span-2 lg:row-start-1`}
       >
-        <Stage right={right} title={pick(left.nav.playground, locale)} />
+        <Stage right={right} title={pick(left.nav.playground, locale)} locale={locale} openId={project?.id ?? null} onOpen={openProject} onClose={closeProject} />
       </div>
 
       <ContactCard locale={locale} visible={navView === "contact"} />

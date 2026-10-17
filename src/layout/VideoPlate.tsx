@@ -22,7 +22,7 @@ export function VideoPlate({ locale }: { locale: Locale }) {
   const embed = kinescopeEmbed(useContent().left.video?.url ?? "");
 
   return (
-    <div className="relative z-2 aspect-video min-h-0 flex-1 overflow-hidden rounded-plate bg-dark-1 lg:aspect-auto lg:min-h-40">
+    <div data-intro-left data-leave className="relative z-2 aspect-video min-h-0 flex-1 overflow-hidden rounded-plate bg-dark-1 lg:aspect-auto lg:min-h-40">
       {embed ? (
         <iframe
           src={embed}
