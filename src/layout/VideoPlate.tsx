@@ -19,7 +19,7 @@ export function kinescopeEmbed(raw: string): string | null {
 
 /** Плашка слева под видео-приветствие (Kinescope). Заполняет остаток высоты колонки. */
 export function VideoPlate({ locale }: { locale: Locale }) {
-  const embed = kinescopeEmbed(useContent().left.video.url);
+  const embed = kinescopeEmbed(useContent().left.video?.url ?? "");
 
   return (
     <div className="relative z-2 flex aspect-video min-h-0 flex-1 rounded-plate bg-light-1 p-1.5 lg:aspect-auto lg:min-h-40">
