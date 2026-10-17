@@ -1,5 +1,3 @@
-import { useLayoutEffect, useRef } from "react";
-import gsap from "gsap";
 import type { Content, Locale } from "../content/types";
 import { pick } from "../lib/pick";
 
@@ -12,33 +10,13 @@ type Props = {
   nav: Content["left"]["nav"];
 };
 
+/**
+ * Верхняя капсула левой колонки: марка слева, справа «Инфо» на светло-серой подложке (без иконки).
+ * «Работы» видны только на телефоне — на десктопе правая часть всегда на экране.
+ * Контакт в меню нет: форма открывается кнопкой с почтой внизу, вернуться — «Инфо» или марка.
+ */
 export function NavBar({ view, onView, locale, nav }: Props) {
-  const items: View[] = ["info", "playground", "contact"];
-  const rowRef = useRef<HTMLDivElement | null>(null);
-  const pillRef = useRef<HTMLSpanElement | null>(null);
-  const placed = useRef(false);
-
-  useLayoutEffect(() => {
-    const row = rowRef.current;
-    const pill = pillRef.current;
-    if (!row || !pill) return;
-
-    const place = (animate: boolean) => {
-      const active = row.querySelector<HTMLElement>(`[data-view="${view}"]`);
-      if (!active || active.offsetParent === null) return;
-      const rowBox = row.getBoundingClientRect();
-      const box = active.getBoundingClientRect();
-      const to = { x: box.left - rowBox.left, y: box.top - rowBox.top, width: box.width, height: box.height };
-      if (animate && placed.current) gsap.to(pill, { ...to, duration: 0.45, ease: "power3.out", overwrite: true });
-      else gsap.set(pill, to);
-      placed.current = true;
-    };
-
-    place(true);
-    const ro = new ResizeObserver(() => place(false)); // смена языка, ширины, масштаба
-    ro.observe(row);
-    return () => ro.disconnect();
-  }, [view, locale, nav]);
+  const items: View[] = ["info", "playground"];
 
   return (
     <nav className="relative z-2 flex h-11 items-center justify-between rounded-full bg-light-1 py-1.5 pr-1.5 pl-4">
@@ -51,13 +29,7 @@ export function NavBar({ view, onView, locale, nav }: Props) {
         <span className="block size-2 rounded-full bg-accent" />
       </button>
 
-      <div ref={rowRef} className="relative flex items-center">
-        <span
-          ref={pillRef}
-          aria-hidden
-          className="pointer-events-none absolute top-0 left-0 z-0 rounded-full bg-accent"
-          style={{ width: 0, height: 0 }}
-        />
+      <div className="flex items-center">
         {items.map((item) => (
           <button
             key={item}
@@ -65,14 +37,11 @@ export function NavBar({ view, onView, locale, nav }: Props) {
             data-view={item}
             aria-current={view === item ? "page" : undefined}
             onClick={() => onView(item)}
-            className={`relative z-1 items-center gap-1.5 rounded-full px-3 py-1.5 text-base leading-6 text-dark-1 ${
-              item === "playground" ? "flex lg:hidden" : "flex"
-            }`}
+            className={`items-center rounded-full px-3 py-1.5 text-base leading-6 text-dark-1 transition-colors duration-200 ${
+              view === item ? "bg-light-2" : "hover:bg-light-2/60"
+            } ${item === "playground" ? "flex lg:hidden" : "flex"}`}
           >
-            <span>{pick(nav[item], locale)}</span>
-            <span className="hidden size-5 place-items-center rounded-full bg-white/70 text-[0.625rem] leading-none lg:grid">
-              {item === "contact" ? "+" : "○"}
-            </span>
+            {pick(nav[item], locale)}
           </button>
         ))}
       </div>

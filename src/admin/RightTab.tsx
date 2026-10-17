@@ -39,9 +39,6 @@ export function RightTab({ draft, edit }: Props) {
     <div className="flex flex-col gap-4">
       <Section title="Настройки правой части">
         <div className="grid gap-4 md:grid-cols-2">
-          <Field label="Заголовок плашки">
-            <Text value={r.title} onChange={(v) => edit((d) => void (d.right.title = v))} />
-          </Field>
           <Field label="Смена слайдов на телефоне, секунд" hint="На телефоне правая часть — один экран без скролла. 0 — не менять автоматически.">
             <Text
               type="number"

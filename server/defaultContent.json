@@ -6,7 +6,7 @@
   "left": {
     "nav": {
       "info": { "ru": "Инфо", "en": "Info" },
-      "playground": { "ru": "Площадка", "en": "Playground" },
+      "playground": { "ru": "Работы", "en": "Works" },
       "contact": { "ru": "Контакт", "en": "Contact" }
     },
     "avatar": null,

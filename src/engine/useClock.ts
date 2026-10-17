@@ -16,6 +16,24 @@ function format(timeZone: string) {
   }
 }
 
+/** Подпись пояса под часами: «Moscow · GMT+3». Неверное имя пояса — берём пояс самого устройства. */
+export function zoneLabel(timeZone: string) {
+  const build = (tz?: string) => {
+    const zone = tz ?? Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const offset =
+      new Intl.DateTimeFormat("en-GB", { timeZone: tz, timeZoneName: "shortOffset" })
+        .formatToParts(new Date())
+        .find((p) => p.type === "timeZoneName")?.value ?? "";
+    const city = zone.split("/").pop()?.replace(/_/g, " ") ?? zone;
+    return offset ? `${city} · ${offset}` : city;
+  };
+  try {
+    return build(timeZone);
+  } catch {
+    return build();
+  }
+}
+
 export function useClock(timeZone: string) {
   const [time, setTime] = useState(() => format(timeZone));
 

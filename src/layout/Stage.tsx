@@ -47,7 +47,7 @@ function Grid({ items }: { items: Item[] }) {
   }, [items]);
 
   return (
-    <div ref={wrapperRef} data-scroll="right" className="h-full overflow-y-auto overscroll-contain p-3">
+    <div ref={wrapperRef} data-scroll="right" className="h-full overflow-y-auto overscroll-contain">
       <div ref={contentRef} className="flex items-start gap-2">
         {columns.map((col, c) => (
           <div key={c} className="flex min-w-0 flex-1 flex-col gap-2">
@@ -165,7 +165,7 @@ function Slideshow({ items, seconds }: { items: Item[]; seconds: number }) {
  * Правая часть. Зависит ТОЛЬКО от `right` из контента (memo) — переключатели слева её не трогают:
  * ни ремонта, ни повторных анимаций, ни перезапуска видео и скролла.
  */
-export const Stage = memo(function Stage({ right }: { right: Right }) {
+export const Stage = memo(function Stage({ right, title }: { right: Right; title: string }) {
   const isDesktop = useIsDesktop();
 
   const items = useMemo<Item[]>(
@@ -177,13 +177,12 @@ export const Stage = memo(function Stage({ right }: { right: Right }) {
   );
 
   return (
-    <section className="flex h-full min-h-0 w-full min-w-0 flex-col rounded-3xl bg-light-2 p-1.5">
-      <div className="mb-1 flex w-fit shrink-0 items-center gap-2 rounded-full bg-light-1 py-1.5 pr-3 pl-2.5 text-base leading-6">
-        <span className="grid size-5 place-items-center rounded-full bg-light-2 text-[0.625rem]">⌂</span>
-        {right.title}
+    <section className="flex h-full min-h-0 w-full min-w-0 flex-col rounded-3xl bg-light-1 p-1.5">
+      <div className="mb-1.5 w-fit shrink-0 rounded-full bg-light-2 px-3 py-1.5 text-base leading-6 text-dark-1">
+        {title}
       </div>
 
-      <div className="relative min-h-0 flex-1 overflow-hidden rounded-[1.25rem] bg-light-1">
+      <div className="relative min-h-0 flex-1 overflow-hidden rounded-[1.125rem]">
         {isDesktop ? <Grid items={items} /> : <Slideshow items={items} seconds={right.autoplaySeconds} />}
       </div>
     </section>

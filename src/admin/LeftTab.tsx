@@ -127,8 +127,7 @@ export function LeftTab({ draft, edit }: Props) {
 
       <Section title="Меню и форма подписки">
         <LocField label="Меню: Инфо" value={l.nav.info} onChange={(v) => edit((d) => void (d.left.nav.info = v))} />
-        <LocField label="Меню: Площадка (на телефоне)" value={l.nav.playground} onChange={(v) => edit((d) => void (d.left.nav.playground = v))} />
-        <LocField label="Меню: Контакт" value={l.nav.contact} onChange={(v) => edit((d) => void (d.left.nav.contact = v))} />
+        <LocField label="Плашка справа «Работы» (и пункт меню на телефоне)" value={l.nav.playground} onChange={(v) => edit((d) => void (d.left.nav.playground = v))} />
         <LocField label="Текст над формой" multiline value={l.contact.text} onChange={(v) => edit((d) => void (d.left.contact.text = v))} />
         <LocField label="Подсказка в поле почты" value={l.contact.placeholder} onChange={(v) => edit((d) => void (d.left.contact.placeholder = v))} />
         <LocField label="Кнопка" value={l.contact.button} onChange={(v) => edit((d) => void (d.left.contact.button = v))} />

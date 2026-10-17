@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useContent } from "../content/ContentContext";
 import { logos, type LogoItem } from "../content/logos";
 
@@ -47,8 +47,16 @@ function logoSize({ w, h }: LogoItem) {
 export function Marquee() {
   const { marquee } = useContent().left;
   const trackRef = useRef<HTMLDivElement>(null);
-  const useLogos = logos.length > 0;
-  const itemCount = useLogos ? logos.length : marquee.length;
+
+  // Файл логотипа удалён или не открылся — выкидываем его из ленты вместе с промежутком,
+  // чтобы в строке не оставалось пустого места. Ширина и скорость пересчитываются сами.
+  const [broken, setBroken] = useState<ReadonlySet<string>>(() => new Set());
+  const shownLogos = logos.filter((logo) => !broken.has(logo.src));
+  const markBroken = (src: string) =>
+    setBroken((prev) => (prev.has(src) ? prev : new Set(prev).add(src)));
+
+  const useLogos = shownLogos.length > 0;
+  const itemCount = useLogos ? shownLogos.length : marquee.length;
 
   // Длительность цикла = ширина одной половины трека / скорость.
   // Так скорость остаётся одной и той же при любом количестве и размере элементов.
@@ -93,13 +101,14 @@ export function Marquee() {
             style={useLogos ? { gap: `${LOGO_GAP}rem`, paddingRight: `${LOGO_GAP}rem` } : undefined}
           >
             {useLogos
-              ? logos.map((logo) => (
+              ? shownLogos.map((logo) => (
                   <img
                     key={logo.src}
                     src={logo.src}
                     alt=""
                     draggable={false}
                     decoding="async"
+                    onError={() => markBroken(logo.src)}
                     className="block shrink-0 object-contain select-none"
                     style={logoSize(logo)}
                   />

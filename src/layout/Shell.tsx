@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 import { useContent } from "../content/ContentContext";
 import type { Locale } from "../content/types";
 import { useIsDesktop } from "../engine/useIsDesktop";
+import { pick } from "../lib/pick";
 import { ContactCard } from "./ContactCard";
 import { InfoPane } from "./InfoPane";
 import { NavBar, type View } from "./NavBar";
@@ -36,7 +37,7 @@ export function Shell() {
   const go = (next: View) => setView(next === navView && next === "contact" ? "info" : next);
 
   return (
-    <div className="grid h-svh w-full grid-cols-1 grid-rows-[auto_minmax(0,1fr)] gap-1 overflow-hidden bg-light-3 p-1.5 antialiased lg:grid-cols-[30rem_minmax(0,1fr)] lg:gap-x-3 lg:p-4">
+    <div className="grid h-svh w-full grid-cols-1 grid-rows-[auto_minmax(0,1fr)] gap-1 overflow-hidden bg-light-3 p-1.5 antialiased lg:grid-cols-[30rem_minmax(0,1fr)] lg:gap-x-1 lg:p-4">
       <NavBar view={navView} onView={go} locale={locale} nav={left.nav} />
 
       <div
@@ -48,7 +49,7 @@ export function Shell() {
       <div
         className={`${navView === "playground" ? "flex" : "hidden lg:flex"} col-start-1 row-start-2 min-h-0 min-w-0 lg:col-start-2 lg:row-span-2 lg:row-start-1`}
       >
-        <Stage right={right} />
+        <Stage right={right} title={pick(left.nav.playground, locale)} />
       </div>
 
       <ContactCard locale={locale} visible={navView === "contact"} />
