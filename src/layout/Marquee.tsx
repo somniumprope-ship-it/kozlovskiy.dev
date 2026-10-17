@@ -7,6 +7,12 @@ import { useContent } from "../content/ContentContext";
  */
 const SPEED_PX_PER_SEC = 25;
 
+/**
+ * Строка движется не плавно, а шагами: стоит STEP_SECONDS, затем сдвигается на SPEED × STEP_SECONDS.
+ * Так движение выглядит «прерывисто», как на референсе. 0 — вернуть плавное движение.
+ */
+const STEP_SECONDS = 1;
+
 export function Marquee() {
   const { marquee } = useContent().left;
   const trackRef = useRef<HTMLDivElement>(null);
@@ -20,7 +26,16 @@ export function Marquee() {
       const half = track.getBoundingClientRect().width / 2;
       const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
       const speed = (SPEED_PX_PER_SEC * rem) / 16;
-      if (half > 0) track.style.animationDuration = `${half / speed}s`;
+      if (half <= 0) return;
+      if (STEP_SECONDS > 0) {
+        // целое число шагов, чтобы петля сходилась без дробного остатка
+        const steps = Math.max(1, Math.round(half / (speed * STEP_SECONDS)));
+        track.style.animationDuration = `${steps * STEP_SECONDS}s`;
+        track.style.animationTimingFunction = `steps(${steps}, end)`;
+      } else {
+        track.style.animationDuration = `${half / speed}s`;
+        track.style.animationTimingFunction = "linear";
+      }
     };
     apply();
     const observer = new ResizeObserver(apply);
