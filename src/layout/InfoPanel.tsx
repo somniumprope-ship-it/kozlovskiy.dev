@@ -28,7 +28,7 @@ export function InfoPanel({ locale, onLocale }: Props) {
             )}
           </div>
           <div className="flex gap-2 pt-0.5 text-base leading-6 text-dark-1">
-            {(["en", "ru"] as const).map((l) => (
+            {(["ru", "en"] as const).map((l) => (
               <button
                 key={l}
                 type="button"

@@ -1,13 +1,26 @@
 {
   "site": {
     "title": "Kozlovskiy — Independent Designer",
-    "accent": "#3d7aed"
+    "accent": "#3d7aed",
+    "background": "#d9d9d9",
+    "plate": "#ffffff",
+    "chip": "#f2f2f2",
+    "text": "#0d0d0d"
   },
   "left": {
     "nav": {
-      "info": { "ru": "Инфо", "en": "Info" },
-      "playground": { "ru": "Работы", "en": "Works" },
-      "contact": { "ru": "Контакт", "en": "Contact" }
+      "info": {
+        "ru": "Инфо",
+        "en": "Info"
+      },
+      "playground": {
+        "ru": "Работы",
+        "en": "Works"
+      },
+      "contact": {
+        "ru": "Контакт",
+        "en": "Contact"
+      }
     },
     "avatar": null,
     "bio": {
@@ -16,11 +29,21 @@
     },
     "timezone": "Europe/Moscow",
     "showClock": true,
-    "marquee": ["Brand", "Product", "Motion", "Web", "Identity", "Systems"],
+    "marquee": [
+      "Brand",
+      "Product",
+      "Motion",
+      "Web",
+      "Identity",
+      "Systems"
+    ],
     "works": [
       {
         "id": "w1",
-        "title": { "ru": "Проект 01", "en": "Project 01" },
+        "title": {
+          "ru": "Проект 01",
+          "en": "Project 01"
+        },
         "body": {
           "ru": "Слот кейса. Коротко: задача, роль, результат. Потом подставите настоящий проект.",
           "en": "Case-study slot. Short description of the problem, the role, and the outcome."
@@ -30,7 +53,10 @@
       },
       {
         "id": "w2",
-        "title": { "ru": "Проект 02", "en": "Project 02" },
+        "title": {
+          "ru": "Проект 02",
+          "en": "Project 02"
+        },
         "body": {
           "ru": "Слот кейса. Три–четыре строки, чтобы высота карточки оставалась стабильной.",
           "en": "Case-study slot. Keep it to three or four lines so the card height stays consistent."
@@ -40,7 +66,10 @@
       },
       {
         "id": "w3",
-        "title": { "ru": "Проект 03", "en": "Project 03" },
+        "title": {
+          "ru": "Проект 03",
+          "en": "Project 03"
+        },
         "body": {
           "ru": "Слот кейса. Слева превью, справа заголовок и текст. Клик можно вести на страницу кейса.",
           "en": "Case-study slot. Thumbnail on the left, title plus body on the right."
@@ -51,18 +80,47 @@
     ],
     "email": "hello@kozlovskiy.dev",
     "socials": [
-      { "id": "s1", "label": "X", "url": "" },
-      { "id": "s2", "label": "in", "url": "" },
-      { "id": "s3", "label": "ig", "url": "" }
+      {
+        "id": "s1",
+        "label": "X",
+        "url": ""
+      },
+      {
+        "id": "s2",
+        "label": "in",
+        "url": ""
+      },
+      {
+        "id": "s3",
+        "label": "ig",
+        "url": ""
+      }
     ],
     "contact": {
       "text": {
         "ru": "Оставьте почту, если хотите заметки о новых работах.",
         "en": "Leave your email if you want notes on new work."
       },
-      "placeholder": { "ru": "Почта", "en": "Enter email" },
-      "button": { "ru": "Подписаться", "en": "Subscribe" },
-      "success": { "ru": "Готово, спасибо!", "en": "Done, thank you!" }
+      "placeholder": {
+        "ru": "Почта",
+        "en": "Enter email"
+      },
+      "button": {
+        "ru": "Подписаться",
+        "en": "Subscribe"
+      },
+      "success": {
+        "ru": "Готово, спасибо!",
+        "en": "Done, thank you!"
+      }
+    },
+    "emailButton": {
+      "fill": "",
+      "border": "#3d7aed",
+      "text": ""
+    },
+    "video": {
+      "url": ""
     }
   },
   "right": {

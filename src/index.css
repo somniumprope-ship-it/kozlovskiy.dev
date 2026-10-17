@@ -10,10 +10,10 @@
   /* Единое скругление всех плашек: 10px на экране 1440×900, дальше масштабируется вместе с интерфейсом */
   --radius-plate: 0.625rem;
 
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "IBM Plex Mono", ui-monospace, monospace;
   --font-mono: "IBM Plex Mono", ui-monospace, monospace;
 
-  /* Весь сайт набран одной толщиной Inter (400), поэтому font-medium и др. тоже дают 400 */
+  /* Весь сайт набран одной толщиной IBM Plex Mono (400), поэтому font-medium и др. тоже дают 400 */
   --font-weight-normal: 400;
   --font-weight-medium: 400;
   --font-weight-semibold: 400;

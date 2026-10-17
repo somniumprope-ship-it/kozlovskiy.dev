@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import type { Content } from "../content/types";
 import { api } from "../lib/api";
-import { btn, Field, LocField, MediaField, move, RowTools, Section, Text, uid } from "./fields";
+import { kinescopeEmbed } from "../layout/VideoPlate";
+import { btn, ColorField, Field, LocField, MediaField, move, RowTools, Section, Text, uid } from "./fields";
 
 type Props = { draft: Content; edit: (fn: (d: Content) => void) => void };
 
@@ -66,46 +67,32 @@ export function LeftTab({ draft, edit }: Props) {
         </button>
       </Section>
 
-      <Section title="Работы" hint="Карточки с превью слева и текстом справа. Если указана ссылка — карточка кликабельна.">
-        {l.works.map((w, i) => (
-          <div key={w.id} className="flex flex-col gap-4 rounded-xl border border-light-3 p-4">
-            <div className="flex items-start justify-between gap-3">
-              <MediaField label="Превью" value={w.thumb} onChange={(m) => edit((d) => void (d.left.works[i].thumb = m))} />
-              <RowTools
-                index={i}
-                count={l.works.length}
-                onMove={(to) => edit((d) => void (d.left.works = move(d.left.works, i, to)))}
-                onRemove={() => edit((d) => void d.left.works.splice(i, 1))}
-              />
-            </div>
-            <LocField label="Название" value={w.title} onChange={(v) => edit((d) => void (d.left.works[i].title = v))} />
-            <LocField label="Описание" multiline rows={3} value={w.body} onChange={(v) => edit((d) => void (d.left.works[i].body = v))} />
-            <Field label="Ссылка (необязательно)">
-              <Text value={w.url} placeholder="https://" onChange={(v) => edit((d) => void (d.left.works[i].url = v))} />
-            </Field>
-          </div>
-        ))}
-        <button
-          type="button"
-          className={`${btn} self-start`}
-          onClick={() =>
-            edit((d) =>
-              void d.left.works.push({ id: uid(), title: { ru: "", en: "" }, body: { ru: "", en: "" }, thumb: null, url: "" }),
-            )
-          }
-        >
-          + Добавить работу
-        </button>
+      <Section
+        title="Видео-приветствие"
+        hint="Вставьте ссылку на видео из Kinescope (ссылка «Поделиться», embed-ссылка или весь код вставки <iframe>). Видео появится слева вместо списка проектов."
+      >
+        <Field label="Ссылка Kinescope">
+          <Text value={l.video.url} placeholder="https://kinescope.io/..." onChange={(v) => edit((d) => void (d.left.video.url = v))} />
+        </Field>
+        {l.video.url && !kinescopeEmbed(l.video.url) ? (
+          <span className="text-xs text-red-600">Не похоже на ссылку Kinescope — видео не будет показано.</span>
+        ) : null}
       </Section>
 
-      <Section title="Почта и соцсети">
+      <Section title="Кнопка с почтой и соцсети">
         <Field label="Почта на кнопке внизу">
           <Text value={l.email} onChange={(v) => edit((d) => void (d.left.email = v))} />
         </Field>
+        <div className="grid gap-4 md:grid-cols-3">
+          <ColorField label="Заливка кнопки" value={l.emailButton.fill} fallback="#ffffff" emptyLabel="без заливки" onChange={(v) => edit((d) => void (d.left.emailButton.fill = v))} />
+          <ColorField label="Цвет обводки" value={l.emailButton.border} fallback={draft.site.accent} emptyLabel="без обводки" onChange={(v) => edit((d) => void (d.left.emailButton.border = v))} />
+          <ColorField label="Цвет текста" value={l.emailButton.text} fallback="#0d0d0d" emptyLabel="как на сайте" onChange={(v) => edit((d) => void (d.left.emailButton.text = v))} />
+        </div>
+        <p className="text-sm text-dark-1/60">Соцсети: две буквы на кнопке и ссылка. Новая строка — новая кнопка.</p>
         {l.socials.map((s, i) => (
           <div key={s.id} className="flex items-center gap-2">
-            <div className="w-24 shrink-0">
-              <Text value={s.label} placeholder="Подпись" onChange={(v) => edit((d) => void (d.left.socials[i].label = v))} />
+            <div className="w-20 shrink-0">
+              <Text value={s.label} placeholder="2 буквы" onChange={(v) => edit((d) => void (d.left.socials[i].label = v.slice(0, 2)))} />
             </div>
             <Text value={s.url} placeholder="https://" onChange={(v) => edit((d) => void (d.left.socials[i].url = v))} />
             <RowTools

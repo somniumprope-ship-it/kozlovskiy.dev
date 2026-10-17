@@ -3,7 +3,7 @@ import type { Locale } from "../content/types";
 import { FooterBar } from "./FooterBar";
 import { InfoPanel } from "./InfoPanel";
 import { Marquee } from "./Marquee";
-import { WorkList } from "./WorkList";
+import { VideoPlate } from "./VideoPlate";
 
 type Props = {
   locale: Locale;
@@ -20,7 +20,7 @@ export function InfoPane({ locale, onLocale, onContact }: Props) {
       <div ref={contentRef} className="flex min-h-full flex-col gap-y-1">
         <InfoPanel locale={locale} onLocale={onLocale} />
         <Marquee />
-        <WorkList locale={locale} />
+        <VideoPlate locale={locale} />
         <FooterBar onContact={onContact} />
       </div>
     </div>

@@ -26,7 +26,15 @@ export type Tile = {
 };
 
 export type Content = {
-  site: { title: string; accent: string };
+  site: {
+    title: string;
+    accent: string;
+    /** Палитра: пустое значение = цвет по умолчанию */
+    background: string; // фон страницы
+    plate: string; // большие белые плашки
+    chip: string; // подложки: «Инфо», «Работы», карточки, кнопки соцсетей
+    text: string;
+  };
   left: {
     nav: { info: Loc; playground: Loc; contact: Loc };
     avatar: Media | null;
@@ -36,6 +44,8 @@ export type Content = {
     marquee: string[];
     works: Work[];
     email: string;
+    emailButton: { fill: string; border: string; text: string };
+    video: { url: string };
     socials: Social[];
     contact: { text: Loc; placeholder: Loc; button: Loc; success: Loc };
   };

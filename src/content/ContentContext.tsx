@@ -4,8 +4,23 @@ import type { Content } from "./types";
 
 const Ctx = createContext<Content | null>(null);
 
-export function applySiteTheme(c: Content) {
-  document.documentElement.style.setProperty("--color-accent", c.site.accent);
+const PALETTE: [keyof Content["site"], string][] = [
+  ["accent", "--color-accent"],
+  ["background", "--color-light-3"],
+  ["plate", "--color-light-1"],
+  ["chip", "--color-light-2"],
+  ["text", "--color-dark-1"],
+];
+
+/** Палитра из админки ложится на CSS-переменные, поэтому цвета меняются на всём сайте сразу. */
+export function applySiteTheme(c: Content, withPalette = true) {
+  const root = document.documentElement.style;
+  for (const [key, cssVar] of PALETTE) {
+    const v = c.site[key];
+    // сама админка остаётся в нейтральных цветах, чтобы не потерять читаемость
+    if (v && (withPalette || key === "accent")) root.setProperty(cssVar, v);
+    else root.removeProperty(cssVar);
+  }
   document.title = c.site.title;
 }
 
@@ -15,7 +30,7 @@ export function ContentProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (content) {
-      applySiteTheme(content);
+      applySiteTheme(content, !location.pathname.startsWith("/admin"));
       return;
     }
     api.content().then(setContent).catch(() => setFailed(true));

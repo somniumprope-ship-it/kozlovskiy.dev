@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { applySiteTheme } from "../content/ContentContext";
 import type { Content } from "../content/types";
 import { api, ApiError, getToken, setToken } from "../lib/api";
-import { btn, btnPrimary, Field, Section, Text } from "./fields";
+import { btn, btnPrimary, ColorField, Field, Section, Text } from "./fields";
 import { LeftTab } from "./LeftTab";
 import { RightTab } from "./RightTab";
 
@@ -75,7 +75,7 @@ function Editor({ initial, onLogout }: { initial: Content; onLogout: () => void 
     try {
       await api.save(draft);
       setSaved(JSON.stringify(draft));
-      applySiteTheme(draft);
+      applySiteTheme(draft, false);
       setStatus("ok");
     } catch (e) {
       if (e instanceof ApiError && e.status === 401) return onLogout();
@@ -119,17 +119,14 @@ function Editor({ initial, onLogout }: { initial: Content; onLogout: () => void 
           <Field label="Название вкладки браузера">
             <Text value={draft.site.title} onChange={(v) => edit((d) => void (d.site.title = v))} />
           </Field>
-          <Field label="Акцентный цвет" hint="Активный пункт меню, кнопки, рамка почты.">
-            <div className="flex items-center gap-3">
-              <input
-                type="color"
-                value={draft.site.accent}
-                onChange={(e) => edit((d) => void (d.site.accent = e.target.value))}
-                className="size-10 cursor-pointer rounded-lg border border-light-3 bg-white p-1"
-              />
-              <span className="font-mono text-sm">{draft.site.accent}</span>
-            </div>
-          </Field>
+          <ColorField label="Акцентный цвет" hint="Активные элементы, точка в логотипе, рамка почты." value={draft.site.accent} fallback="#3d7aed" onChange={(v) => edit((d) => void (d.site.accent = v))} />
+          <ColorField label="Фон сайта" hint="Тёмно-серое поле вокруг плашек." value={draft.site.background} fallback="#d9d9d9" onChange={(v) => edit((d) => void (d.site.background = v))} />
+          <ColorField label="Цвет больших плашек" hint="Белые плашки слева и справа." value={draft.site.plate} fallback="#ffffff" onChange={(v) => edit((d) => void (d.site.plate = v))} />
+          <ColorField label="Цвет подложек" hint="«Инфо», «Работы», кнопки соцсетей." value={draft.site.chip} fallback="#f2f2f2" onChange={(v) => edit((d) => void (d.site.chip = v))} />
+          <ColorField label="Цвет текста" value={draft.site.text} fallback="#0d0d0d" onChange={(v) => edit((d) => void (d.site.text = v))} />
+          <button type="button" className={`${btn} self-start`} onClick={() => edit((d) => void Object.assign(d.site, { accent: "#3d7aed", background: "#d9d9d9", plate: "#ffffff", chip: "#f2f2f2", text: "#0d0d0d" }))}>
+            Сбросить палитру
+          </button>
         </Section>
       ) : null}
     </div>

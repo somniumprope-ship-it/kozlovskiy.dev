@@ -189,3 +189,42 @@ export function move<T>(arr: T[], from: number, to: number) {
   next.splice(to, 0, it);
   return next;
 }
+
+/** Выбор цвета. Если задан `empty` — можно выключить цвет («нет»/«по умолчанию»). */
+export function ColorField({
+  label,
+  value,
+  onChange,
+  fallback,
+  emptyLabel,
+  hint,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  fallback: string;
+  emptyLabel?: string;
+  hint?: string;
+}) {
+  const on = value !== "";
+  return (
+    <div className="flex flex-col gap-1.5">
+      <span className="text-sm font-medium">{label}</span>
+      <div className="flex flex-wrap items-center gap-3">
+        <input
+          type="color"
+          value={on ? value : fallback}
+          onChange={(e) => onChange(e.target.value)}
+          className={`size-10 cursor-pointer rounded-lg border border-light-3 bg-white p-1 ${on ? "" : "opacity-40"}`}
+        />
+        <span className="font-mono text-sm">{on ? value : emptyLabel ?? "—"}</span>
+        {emptyLabel ? (
+          <button type="button" className={btn} onClick={() => onChange(on ? "" : fallback)}>
+            {on ? `Сделать: ${emptyLabel}` : "Задать цвет"}
+          </button>
+        ) : null}
+      </div>
+      {hint ? <span className="text-xs text-dark-1/55">{hint}</span> : null}
+    </div>
+  );
+}

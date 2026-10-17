@@ -8,6 +8,8 @@ type Props = {
   onView: (view: View) => void;
   locale: Locale;
   nav: Content["left"]["nav"];
+  /** На десктопе «Инфо» ни на что не нажимается — это просто плашка */
+  desktop: boolean;
 };
 
 /**
@@ -15,7 +17,7 @@ type Props = {
  * «Работы» видны только на телефоне — на десктопе правая часть всегда на экране.
  * Контакт в меню нет: форма открывается кнопкой с почтой внизу, вернуться — «Инфо» или марка.
  */
-export function NavBar({ view, onView, locale, nav }: Props) {
+export function NavBar({ view, onView, locale, nav, desktop }: Props) {
   const items: View[] = ["info", "playground"];
 
   return (
@@ -30,7 +32,12 @@ export function NavBar({ view, onView, locale, nav }: Props) {
       </button>
 
       <div className="flex items-center">
-        {items.map((item) => (
+        {items.map((item) =>
+          desktop && item === "info" ? (
+            <span key={item} data-view={item} className="flex items-center rounded-plate bg-light-2 px-3 py-1 text-base leading-6 text-dark-1">
+              {pick(nav[item], locale)}
+            </span>
+          ) : (
           <button
             key={item}
             type="button"
@@ -43,7 +50,8 @@ export function NavBar({ view, onView, locale, nav }: Props) {
           >
             {pick(nav[item], locale)}
           </button>
-        ))}
+          ),
+        )}
       </div>
     </nav>
   );

@@ -38,7 +38,7 @@ export function Shell() {
 
   return (
     <div className="grid h-svh w-full grid-cols-1 grid-rows-[auto_minmax(0,1fr)] gap-1 overflow-hidden bg-light-3 p-1.5 antialiased lg:grid-cols-[30rem_minmax(0,1fr)] lg:gap-x-1 lg:p-1">
-      <NavBar view={navView} onView={go} locale={locale} nav={left.nav} />
+      <NavBar view={navView} onView={go} locale={locale} nav={left.nav} desktop={isDesktop} />
 
       <div
         className={`${navView === "info" ? "flex" : "hidden lg:flex"} col-start-1 row-start-2 min-h-0 min-w-0`}
