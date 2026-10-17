@@ -33,7 +33,7 @@ export function InfoPanel({ locale, onLocale }: Props) {
                 key={l}
                 type="button"
                 aria-pressed={locale === l}
-                className={locale === l ? "opacity-100" : "opacity-40 transition-opacity hover:opacity-70"}
+                className={locale === l ? "underline decoration-1 underline-offset-4 opacity-100" : "opacity-40 transition-opacity hover:opacity-70"}
                 onClick={() => onLocale(l)}
               >
                 {l.toUpperCase()}
