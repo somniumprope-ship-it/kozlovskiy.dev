@@ -8,10 +8,10 @@
 
 | Роль | На референсе | Лицензия | Что стоит у нас |
 | --- | --- | --- | --- |
-| Основной гротеск | PP Neue Montreal Regular / Medium | Коммерческий шрифт Pangram Pangram, **нельзя** брать без лицензии | **Inter** (SIL OFL 1.1, можно в коммерции, есть кириллица) |
+| Основной гротеск | PP Neue Montreal Regular / Medium | Коммерческий шрифт Pangram Pangram, **нельзя** брать без лицензии | **Open Sans Light 300** (Google Fonts, SIL OFL 1.1, можно в коммерции, есть кириллица). Весь сайт набран одной толщиной 300: `font-normal/medium/semibold/bold` в `src/index.css` тоже равны 300 |
 | Моно (часы, код) | PP Neue Montreal Mono Book | Тоже коммерческий | **IBM Plex Mono** (SIL OFL 1.1) |
 
-Inter подключён как ближайший свободный аналог по пропорциям (нео-гротеск, экраны). Если позже купите Neue Montreal — достаточно сменить `--font-sans` в `src/index.css`.
+Шрифт подключён ссылкой Google Fonts в `index.html`. Сменить его — `--font-sans` в `src/index.css` и ссылка в `index.html`; толщины — `--font-weight-*` там же.
 
 ### Кегли (как в схеме референса)
 
