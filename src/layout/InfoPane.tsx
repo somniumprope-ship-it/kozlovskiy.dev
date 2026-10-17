@@ -30,7 +30,7 @@ export function InfoPane({ locale, onLocale, onContact, project, onCloseProject 
   const [compact, setCompact] = useState(!!project);
   const [held, setHeld] = useState<Tile | null>(project);
   const modeRef = useRef<Mode>(mode);
-  const entered = useRef(false);
+  const prevMode = useRef<Mode>(mode);
   const busy = useRef<gsap.core.Tween | null>(null);
 
   useEffect(() => {
@@ -69,10 +69,9 @@ export function InfoPane({ locale, onLocale, onContact, project, onCloseProject 
 
   // Вход после смены режима: плашка проекта выезжает, либо три секции возвращаются по очереди
   useLayoutEffect(() => {
-    if (!entered.current) {
-      entered.current = true;
-      return;
-    }
+    // анимируем только настоящую смену режима (не первый показ и не повторный запуск эффекта в dev)
+    if (prevMode.current === mode) return;
+    prevMode.current = mode;
     const root = contentRef.current;
     if (!root) return;
     const els = mode === "project" ? root.querySelectorAll("[data-project-plate]") : root.querySelectorAll("[data-leave]");
