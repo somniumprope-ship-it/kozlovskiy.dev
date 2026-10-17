@@ -10,11 +10,11 @@
   --font-sans: "Open Sans", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, monospace;
 
-  /* Весь сайт набран самой тонкой толщиной Open Sans (300), поэтому font-medium и др. тоже дают 300 */
-  --font-weight-normal: 300;
-  --font-weight-medium: 300;
-  --font-weight-semibold: 300;
-  --font-weight-bold: 300;
+  /* Весь сайт набран одной толщиной Open Sans (400), поэтому font-medium и др. тоже дают 400 */
+  --font-weight-normal: 400;
+  --font-weight-medium: 400;
+  --font-weight-semibold: 400;
+  --font-weight-bold: 400;
 }
 
 /*
@@ -46,7 +46,7 @@ html {
 body {
   margin: 0;
   font-family: var(--font-sans);
-  font-weight: 300;
+  font-weight: 400;
   font-optical-sizing: auto;
   color: var(--color-dark-1);
   background: var(--color-light-3);
