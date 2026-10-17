@@ -19,7 +19,7 @@ export function WorkList({ locale }: { locale: Locale }) {
             {...(work.url ? { href: work.url, target: "_blank", rel: "noreferrer" } : {})}
             className="group flex gap-x-3 rounded-[1.125rem] border border-light-2 bg-light-2 p-2.5 text-dark-1 transition-colors duration-100 hover:border-accent/40 hover:bg-accent/10"
           >
-            <div className="size-30 shrink-0 overflow-hidden rounded-xl">
+            <div className="size-18 shrink-0 overflow-hidden rounded-lg">
               {work.thumb ? (
                 <MediaView
                   media={work.thumb}
