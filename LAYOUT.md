@@ -8,7 +8,7 @@
 
 | Роль | На референсе | Лицензия | Что стоит у нас |
 | --- | --- | --- | --- |
-| Основной гротеск | PP Neue Montreal Regular / Medium | Коммерческий шрифт Pangram Pangram, **нельзя** брать без лицензии | **Raleway Regular 400** (Google Fonts, SIL OFL 1.1, можно в коммерции, есть кириллица; ровные цифры включены через `lining-nums`). Весь сайт набран одной толщиной 400: `font-normal/medium/semibold/bold` в `src/index.css` тоже равны 400 |
+| Основной гротеск | PP Neue Montreal Regular / Medium | Коммерческий шрифт Pangram Pangram, **нельзя** брать без лицензии | **Inter Regular 400** (Google Fonts, SIL OFL 1.1, можно в коммерции, есть кириллица). Весь сайт набран одной толщиной 400: `font-normal/medium/semibold/bold` в `src/index.css` тоже равны 400 |
 | Моно (часы, код) | PP Neue Montreal Mono Book | Тоже коммерческий | **IBM Plex Mono** (SIL OFL 1.1) |
 
 Шрифт подключён ссылкой Google Fonts в `index.html`. Сменить его — `--font-sans` в `src/index.css` и ссылка в `index.html`; толщины — `--font-weight-*` там же.

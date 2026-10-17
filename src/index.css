@@ -7,10 +7,10 @@
   --color-light-3: #d9d9d9;
   --color-dark-1: #0d0d0d;
   --color-accent: #3d7aed;
-  --font-sans: "Raleway", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, monospace;
 
-  /* Весь сайт набран одной толщиной Raleway (400), поэтому font-medium и др. тоже дают 400 */
+  /* Весь сайт набран одной толщиной Inter (400), поэтому font-medium и др. тоже дают 400 */
   --font-weight-normal: 400;
   --font-weight-medium: 400;
   --font-weight-semibold: 400;
@@ -47,8 +47,6 @@ body {
   margin: 0;
   font-family: var(--font-sans);
   font-weight: 400;
-  /* У Raleway цифры по умолчанию «старого стиля» (разной высоты) — включаем ровные */
-  font-variant-numeric: lining-nums;
   font-optical-sizing: auto;
   color: var(--color-dark-1);
   background: var(--color-light-3);
