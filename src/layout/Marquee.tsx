@@ -11,7 +11,7 @@ const SPEED_PX_PER_SEC = 75;
  * Строка движется не плавно, а шагами: стоит STEP_SECONDS, затем сдвигается на SPEED × STEP_SECONDS.
  * Так движение выглядит «прерывисто», как на референсе. 0 — вернуть плавное движение.
  */
-const STEP_SECONDS = 1;
+const STEP_SECONDS = 1 / 3;
 
 export function Marquee() {
   const { marquee } = useContent().left;
