@@ -1,0 +1,12 @@
+node_modules
+.DS_Store
+dist
+.env
+
+._*
+.DS_Store
+data/.secret
+
+._*
+.DS_Store
+data/.secret
