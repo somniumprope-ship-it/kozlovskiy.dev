@@ -21,9 +21,13 @@ const STEP_SECONDS = 1 / 3;
  * слишком высокие и слишком широкие логотипы ограничены LOGO_MAX_H и LOGO_MAX_W.
  * Больше LOGO_AREA — крупнее все логотипы сразу.
  */
-const LOGO_AREA = 10;
-const LOGO_MAX_H = 2.4;
-const LOGO_MAX_W = 10;
+const LOGO_SCALE = 1 / 1.5; // логотипы в 1,5 раза меньше прежнего размера
+const LOGO_AREA = 10 * LOGO_SCALE ** 2;
+const LOGO_MAX_H = 2.4 * LOGO_SCALE;
+const LOGO_MAX_W = 10 * LOGO_SCALE;
+
+/** Расстояние между логотипами, rem. На стыке двух половин строки такой же промежуток. */
+const LOGO_GAP = 1.5;
 
 function logoSize({ w, h }: LogoItem) {
   const ratio = w / h;
@@ -83,7 +87,11 @@ export function Marquee() {
     <div className="relative z-2 flex h-14 shrink-0 items-center overflow-hidden rounded-3xl bg-light-1" aria-hidden>
       <div ref={trackRef} className="marquee-track flex">
         {[0, 1].map((n) => (
-          <div key={n} className={`flex shrink-0 items-center pr-8 pl-6 ${useLogos ? "gap-12" : "gap-8"}`}>
+          <div
+            key={n}
+            className={`flex shrink-0 items-center ${useLogos ? "" : "gap-8 pr-8 pl-6"}`}
+            style={useLogos ? { gap: `${LOGO_GAP}rem`, paddingRight: `${LOGO_GAP}rem` } : undefined}
+          >
             {useLogos
               ? logos.map((logo) => (
                   <img
