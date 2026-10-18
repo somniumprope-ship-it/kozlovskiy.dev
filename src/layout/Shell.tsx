@@ -1,5 +1,5 @@
 import gsap from "gsap";
-import { useCallback, useEffect, useLayoutEffect, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useContent } from "../content/ContentContext";
 import type { Locale } from "../content/types";
 import { useIsDesktop } from "../engine/useIsDesktop";
@@ -63,19 +63,55 @@ export function Shell() {
     return () => ctx.revert();
   }, []);
 
-  // Телефон: «Работы» открываются справа
+  // Телефон: переключение «Инфо» ⇄ «Работы». Уходящая часть уезжает (секции слева по очереди / плашка вправо),
+  // потом въезжает новая. `shown` — то, что реально на экране, `navView` — то, что выбрано в меню.
+  const [shown, setShown] = useState<View>(navView);
+  const prevShown = useRef<View>(navView);
+  const swapTween = useRef<gsap.core.Tween | null>(null);
+  const swapped = useRef(false);
+
   useEffect(() => {
-    if (isDesktop || navView !== "playground") return;
-    const tween = gsap.fromTo("[data-intro-right]", { x: "100%" }, { x: 0, duration: 0.5, ease: "power3.out", clearProps: "transform" });
-    return () => void tween.kill();
-  }, [navView, isDesktop]);
+    if (isDesktop) return;
+    if (shown === navView) {
+      // переключились туда-обратно посреди анимации — вернуть секции на место
+      if (swapped.current) gsap.set(["[data-pane=left] [data-intro-left]", "[data-intro-right]"], { clearProps: "transform" });
+      swapped.current = false;
+      return;
+    }
+    swapped.current = true;
+    swapTween.current?.kill();
+    const swap = () => setShown(navView);
+    if (shown === "info" || shown === "playground") {
+      const targets =
+        shown === "info" ? gsap.utils.toArray<HTMLElement>("[data-pane=left] [data-intro-left]") : ["[data-intro-right]"];
+      swapTween.current =
+        shown === "info"
+          ? gsap.to(targets, { x: "-110%", duration: 0.35, stagger: 0.08, ease: "power2.in", onComplete: swap })
+          : gsap.to(targets, { x: "110%", duration: 0.4, ease: "power2.in", onComplete: swap });
+    } else swap();
+    return () => void swapTween.current?.kill();
+  }, [navView, shown, isDesktop]);
+
+  useLayoutEffect(() => {
+    if (prevShown.current === shown) return;
+    prevShown.current = shown;
+    if (isDesktop) return;
+    if (shown === "playground") {
+      gsap.fromTo("[data-intro-right]", { x: "110%" }, { x: 0, duration: 0.5, ease: "power3.out", clearProps: "transform" });
+    } else if (shown === "info") {
+      gsap.fromTo("[data-pane=left] [data-intro-left]", { x: "-110%" }, { x: 0, duration: 0.5, stagger: 0.08, ease: "power3.out", clearProps: "transform" });
+    }
+  }, [shown, isDesktop]);
+
+  const screen: View = isDesktop ? navView : shown;
 
   return (
     <div className="grid h-svh w-full grid-cols-1 grid-rows-[auto_minmax(0,1fr)] gap-1 overflow-hidden bg-light-3 p-1.5 antialiased lg:grid-cols-[30rem_minmax(0,1fr)] lg:gap-x-1 lg:p-1">
       <NavBar view={navView} onView={go} locale={locale} nav={left.nav} desktop={isDesktop} />
 
       <div
-        className={`${navView === "info" ? "flex" : "hidden lg:flex"} col-start-1 row-start-2 min-h-0 min-w-0`}
+        className={`${screen === "info" ? "flex" : "hidden lg:flex"} col-start-1 row-start-2 min-h-0 min-w-0`}
+        data-pane="left"
       >
         <InfoPane
           locale={locale}
@@ -87,12 +123,12 @@ export function Shell() {
       </div>
 
       <div
-        className={`${navView === "playground" ? "flex" : "hidden lg:flex"} col-start-1 row-start-2 min-h-0 min-w-0 lg:col-start-2 lg:row-span-2 lg:row-start-1`}
+        className={`${screen === "playground" ? "flex" : "hidden lg:flex"} col-start-1 row-start-2 min-h-0 min-w-0 lg:col-start-2 lg:row-span-2 lg:row-start-1`}
       >
         <Stage right={right} title={pick(left.nav.playground, locale)} locale={locale} openId={project?.id ?? null} onOpen={openProject} onClose={closeProject} />
       </div>
 
-      <ContactCard locale={locale} visible={navView === "contact"} />
+      <ContactCard locale={locale} visible={screen === "contact"} />
     </div>
   );
 }

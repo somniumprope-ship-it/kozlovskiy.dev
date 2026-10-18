@@ -167,7 +167,7 @@ export const Stage = memo(function Stage({ right, title, locale, openId, onOpen,
     if (bodyRef.current) gsap.fromTo(bodyRef.current, { opacity: 0, x: shownId ? 60 : -60 }, { opacity: 1, x: 0, duration: 0.5, ease: "power3.out" });
   }, [shownId]);
 
-  const heading = shown ? pick(shown.project!.title, locale) : title;
+  const heading = title;
 
   return (
     <section data-intro-right className="flex h-full min-h-0 w-full min-w-0 flex-col rounded-plate bg-light-1 p-1.5">
@@ -175,10 +175,10 @@ export const Stage = memo(function Stage({ right, title, locale, openId, onOpen,
         <button
           type="button"
           onClick={onClose}
-          className="mb-1.5 flex w-fit shrink-0 items-center gap-2 rounded-plate bg-light-2 px-3 py-1 text-base leading-6 text-dark-1 transition-opacity hover:opacity-70"
+          className="mb-5 flex w-fit shrink-0 items-center gap-2 rounded-plate bg-light-2 px-3 py-1 text-base leading-6 text-dark-1 transition-opacity hover:opacity-70 lg:mb-1.5"
         >
           <span aria-hidden>←</span>
-          {heading}
+          {locale === "ru" ? "Назад" : "Back"}
         </button>
       ) : (
         // на телефоне заголовок уже есть в шапке («Работы»), поэтому плашку там не дублируем
