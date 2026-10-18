@@ -2,7 +2,6 @@ import gsap from "gsap";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useSmoothScroll } from "../engine/useSmoothScroll";
 import type { Locale, Tile } from "../content/types";
-import { FooterBar } from "./FooterBar";
 import { InfoPanel } from "./InfoPanel";
 import { Marquee } from "./Marquee";
 import { ProjectInfo } from "./ProjectInfo";
@@ -11,7 +10,6 @@ import { VideoPlate } from "./VideoPlate";
 type Props = {
   locale: Locale;
   onLocale: (l: Locale) => void;
-  onContact: () => void;
   /** Открытый проект (только десктоп) */
   project: Tile | null;
   onCloseProject: () => void;
@@ -24,7 +22,7 @@ type Mode = "home" | "project";
  * Открытие проекта: марки, видео и почта по очереди уезжают влево → карточка с фото сжимается →
  * выезжает одна плашка с описанием. Закрытие — то же самое в обратном порядке.
  */
-export function InfoPane({ locale, onLocale, onContact, project, onCloseProject }: Props) {
+export function InfoPane({ locale, onLocale, project, onCloseProject }: Props) {
   const { wrapperRef, contentRef } = useSmoothScroll<HTMLDivElement>();
   const [mode, setMode] = useState<Mode>(project ? "project" : "home");
   const [compact, setCompact] = useState(!!project);
@@ -88,7 +86,6 @@ export function InfoPane({ locale, onLocale, onContact, project, onCloseProject 
           <>
             <Marquee />
             <VideoPlate locale={locale} />
-            <FooterBar onContact={onContact} />
           </>
         )}
       </div>

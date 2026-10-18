@@ -115,9 +115,9 @@
       }
     },
     "emailButton": {
-      "fill": "",
-      "border": "#3d7aed",
-      "text": ""
+      "fill": "#3d7aed",
+      "border": "",
+      "text": "#ffffff"
     },
     "video": {
       "url": ""

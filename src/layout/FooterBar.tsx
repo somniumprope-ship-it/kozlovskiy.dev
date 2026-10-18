@@ -4,7 +4,7 @@ export function FooterBar({ onContact }: { onContact: () => void }) {
   const { email, emailButton: btn, socials } = useContent().left;
 
   return (
-    <div data-intro-left data-leave className="relative z-2 flex shrink-0 flex-wrap items-center justify-between gap-3 rounded-plate bg-light-1 p-4">
+    <div data-intro-left className="relative z-2 col-start-1 row-start-3 flex shrink-0 items-center justify-between gap-3 rounded-plate bg-light-1 p-4 max-lg:p-3">
       <button
         type="button"
         onClick={onContact}
@@ -13,11 +13,11 @@ export function FooterBar({ onContact }: { onContact: () => void }) {
           borderColor: btn?.border || "transparent",
           color: btn?.text || undefined,
         }}
-        className="flex min-w-0 items-center rounded-plate border px-3 py-1.5 text-base leading-6 transition-opacity duration-200 hover:opacity-70"
+        className="flex min-w-0 items-center rounded-plate border px-3 py-1.5 text-[0.8125rem] leading-6 transition-opacity lg:text-base duration-200 hover:opacity-70"
       >
         <span className="truncate">{email}</span>
       </button>
-      <div className="flex flex-wrap gap-1.5">
+      <div className="flex shrink-0 gap-1.5">
         {socials.map((s) => (
           <a
             key={s.id}

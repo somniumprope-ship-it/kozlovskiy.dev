@@ -5,6 +5,7 @@ import type { Locale } from "../content/types";
 import { useIsDesktop } from "../engine/useIsDesktop";
 import { pick } from "../lib/pick";
 import { ContactCard } from "./ContactCard";
+import { FooterBar } from "./FooterBar";
 import { InfoPane } from "./InfoPane";
 import { NavBar, type View } from "./NavBar";
 import { Stage } from "./Stage";
@@ -153,7 +154,7 @@ export function Shell() {
   }, [replay]);
 
   return (
-    <div key={tick} className="grid h-svh w-full grid-cols-1 grid-rows-[auto_minmax(0,1fr)] gap-1 overflow-hidden bg-light-3 p-1.5 antialiased lg:grid-cols-[30rem_minmax(0,1fr)] lg:gap-x-1 lg:p-1">
+    <div key={tick} className="grid h-svh w-full grid-cols-1 grid-rows-[auto_minmax(0,1fr)_auto] gap-1 overflow-hidden bg-light-3 p-1.5 antialiased lg:grid-cols-[30rem_minmax(0,1fr)] lg:gap-x-1 lg:p-1">
       <NavBar view={navView} onView={go} locale={locale} nav={left.nav} desktop={isDesktop} onHome={() => replay()} />
 
       <div
@@ -163,17 +164,19 @@ export function Shell() {
         <InfoPane
           locale={locale}
           onLocale={setLocale}
-          onContact={() => go("contact")}
           project={isDesktop ? project : null}
           onCloseProject={closeProject}
         />
       </div>
 
       <div
-        className={`${screen === "playground" ? "flex" : "hidden lg:flex"} col-start-1 row-start-2 min-h-0 min-w-0 lg:col-start-2 lg:row-span-2 lg:row-start-1`}
+        className={`${screen === "playground" ? "flex" : "hidden lg:flex"} col-start-1 row-start-2 min-h-0 min-w-0 lg:col-start-2 lg:row-span-3 lg:row-start-1`}
       >
         <Stage right={right} title={pick(left.nav.playground, locale)} locale={locale} openId={project?.id ?? null} onOpen={openProject} onClose={closeProject} />
       </div>
+
+      {/* Почта и соцсети остаются на месте при любом экране и в любом проекте */}
+      <FooterBar onContact={() => go("contact")} />
 
       <ContactCard locale={locale} visible={screen === "contact"} />
     </div>

@@ -114,6 +114,11 @@
         "ru": "Готово, спасибо!",
         "en": "Done, thank you!"
       }
+    },
+    "emailButton": {
+      "fill": "#3d7aed",
+      "border": "",
+      "text": "#ffffff"
     }
   },
   "right": {
