@@ -5,6 +5,7 @@ import type { Locale, Tile } from "../content/types";
 import { InfoPanel } from "./InfoPanel";
 import { Marquee } from "./Marquee";
 import { ProjectInfo } from "./ProjectInfo";
+import { COMPACT_AT, IN_START } from "./timing";
 import { VideoPlate } from "./VideoPlate";
 
 type Props = {
@@ -16,9 +17,6 @@ type Props = {
 };
 
 type Mode = "home" | "project";
-
-/** Длительность сжатия карточки с фото (duration-500 в InfoPanel) */
-const COMPACT_SECONDS = 0.5;
 
 /**
  * Левая колонка: свой скролл, высота ограничена экраном.
@@ -51,35 +49,36 @@ export function InfoPane({ locale, onLocale, project, onCloseProject }: Props) {
     if (!root) return;
 
     if (want === "project") {
+      // 0 → секции уезжают, сжатие карточки заканчивается вместе с уходом работ справа,
+      // IN_START → выезжает плашка проекта (одновременно с фото справа)
       const els = root.querySelectorAll("[data-leave]");
-      busy.current = gsap.to(els, {
-        x: "-110%",
-        duration: 0.4,
-        stagger: 0.08,
-        ease: "power2.in",
-        // сначала сжимается карточка с фото, и только когда она закончила — выезжает плашка проекта
-        onComplete: () => {
-          setCompact(true);
-          busy.current = gsap.delayedCall(COMPACT_SECONDS, () => {
+      busy.current = gsap
+        .timeline()
+        .to(els, { x: "-110%", duration: 0.4, stagger: 0.08, ease: "power2.in" }, 0)
+        .call(() => setCompact(true), undefined, COMPACT_AT)
+        .call(
+          () => {
             modeRef.current = "project";
             setMode("project");
-          });
-        },
-      });
+          },
+          undefined,
+          IN_START,
+        );
     } else {
       const plate = root.querySelector("[data-project-plate]");
-      const finish = () => {
-        modeRef.current = "home";
-        setMode("home");
-        setHeld(null);
-      };
-      // обратный порядок: плашка проекта уезжает → карточка с фото разворачивается → возвращаются остальные секции
-      const expand = () => {
-        setCompact(false);
-        busy.current = gsap.delayedCall(COMPACT_SECONDS, finish);
-      };
-      if (plate) busy.current = gsap.to(plate, { x: "-110%", duration: 0.4, ease: "power2.in", onComplete: expand });
-      else expand();
+      // обратный порядок: плашка уезжает вместе с фото справа, карточка разворачивается, секции возвращаются вместе с работами
+      const tl = gsap.timeline();
+      if (plate) tl.to(plate, { x: "-110%", duration: 0.7, ease: "power2.in" }, 0);
+      tl.call(() => setCompact(false), undefined, COMPACT_AT).call(
+        () => {
+          modeRef.current = "home";
+          setMode("home");
+          setHeld(null);
+        },
+        undefined,
+        IN_START,
+      );
+      busy.current = tl;
     }
   }, [project, contentRef]);
 
@@ -91,7 +90,7 @@ export function InfoPane({ locale, onLocale, project, onCloseProject }: Props) {
     const root = contentRef.current;
     if (!root) return;
     const els = mode === "project" ? root.querySelectorAll("[data-project-plate]") : root.querySelectorAll("[data-leave]");
-    gsap.fromTo(els, { x: "-110%" }, { x: 0, duration: 0.5, stagger: 0.08, ease: "power3.out", clearProps: "transform" });
+    gsap.fromTo(els, { x: "-110%" }, { x: 0, duration: mode === "project" ? 0.9 : 0.5, stagger: 0.08, ease: "power3.out", clearProps: "transform" });
   }, [mode, contentRef]);
 
   return (

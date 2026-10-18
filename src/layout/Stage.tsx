@@ -3,6 +3,7 @@ import { memo, useEffect, useLayoutEffect, useMemo, useRef, useState } from "rea
 import type { Content, Locale, Media, Tile } from "../content/types";
 import { pick } from "../lib/pick";
 import { ProjectTags, SiteLink } from "./projectBits";
+import { OUT_END, PAUSE } from "./timing";
 import { useIsDesktop } from "../engine/useIsDesktop";
 import { useSmoothScroll } from "../engine/useSmoothScroll";
 import { MediaView } from "./Media";
@@ -160,8 +161,8 @@ export const Stage = memo(function Stage({ right, title, locale, openId, onOpen,
     const tiles = tilesOf(el);
     // подложка стоит на месте, плитки по очереди уезжают вправо
     const tween = tiles.length
-      ? gsap.to(tiles, { x: "110%", duration: 0.7, stagger: 0.06, ease: "power2.in", onComplete: done })
-      : gsap.to(el, { x: "110%", duration: 0.6, ease: "power2.in", onComplete: done });
+      ? gsap.to(tiles, { x: "110%", duration: 0.7, stagger: { amount: OUT_END - 0.7 }, ease: "power2.in", onComplete: done })
+      : gsap.to(el, { x: "110%", duration: 0.7, ease: "power2.in", onComplete: done });
     return () => void tween.kill();
   }, [openTile, shownId]);
 
@@ -175,8 +176,8 @@ export const Stage = memo(function Stage({ right, title, locale, openId, onOpen,
     gsap.set(el, { clearProps: "transform" });
     const tiles = tilesOf(el);
     // небольшая пауза, потом плитки по очереди выезжают справа
-    if (tiles.length) gsap.fromTo(tiles, { x: "110%" }, { x: 0, duration: 0.9, delay: 0.3, stagger: 0.07, ease: "power3.out", clearProps: "transform" });
-    else gsap.fromTo(el, { x: "110%" }, { x: 0, duration: 0.8, delay: 0.3, ease: "power3.out", clearProps: "transform" });
+    if (tiles.length) gsap.fromTo(tiles, { x: "110%" }, { x: 0, duration: 0.9, delay: PAUSE, stagger: { amount: 0.5 }, ease: "power3.out", clearProps: "transform" });
+    else gsap.fromTo(el, { x: "110%" }, { x: 0, duration: 0.8, delay: PAUSE, ease: "power3.out", clearProps: "transform" });
   }, [shownId]);
 
   const heading = title;
