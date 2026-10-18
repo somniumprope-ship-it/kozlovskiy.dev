@@ -10,6 +10,8 @@ type Props = {
   nav: Content["left"]["nav"];
   /** На десктопе «Инфо» ни на что не нажимается — это просто плашка */
   desktop: boolean;
+  /** Клик по логотипу: страница «перезагружается» анимацией */
+  onHome: () => void;
 };
 
 /**
@@ -17,12 +19,12 @@ type Props = {
  * «Работы» видны только на телефоне — на десктопе правая часть всегда на экране.
  * Контакт в меню нет: форма открывается кнопкой с почтой внизу, вернуться — «Инфо» или марка.
  */
-export function NavBar({ view, onView, locale, nav, desktop }: Props) {
+export function NavBar({ view, onView, locale, nav, desktop, onHome }: Props) {
   const items: View[] = ["info", "playground"];
 
   return (
     <nav data-intro-left className="relative z-2 flex h-11 items-center justify-between rounded-plate bg-light-1 py-1.5 pr-1.5 pl-4">
-      <button type="button" aria-label="Home" className="text-base leading-6 text-dark-1" onClick={() => onView("info")}>
+      <button type="button" aria-label="Home" className="text-base leading-6 text-dark-1" onClick={onHome}>
         kozlovskiy
       </button>
 

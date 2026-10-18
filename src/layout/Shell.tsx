@@ -26,6 +26,13 @@ function useLocale(): [Locale, (l: Locale) => void] {
  * - <Stage> получает только `right` из контента и обёрнут в memo, поэтому на клики слева не перерисовывается.
  * Раскладка одна на оба размера и управляется CSS (lg: = десктоп), поэтому ничего не пересоздаётся.
  */
+const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function playIntro() {
+  gsap.fromTo("[data-intro-left]", { x: "-110%" }, { x: 0, duration: 0.7, stagger: 0.09, ease: "power3.out", clearProps: "transform" });
+  gsap.fromTo("[data-intro-right]", { x: "110%" }, { x: 0, duration: 0.8, delay: 0.1, ease: "power3.out", clearProps: "transform" });
+}
+
 export function Shell() {
   const { right, left } = useContent();
   const isDesktop = useIsDesktop();
@@ -74,7 +81,7 @@ export function Shell() {
     if (isDesktop) return;
     if (shown === navView) {
       // переключились туда-обратно посреди анимации — вернуть секции на место
-      if (swapped.current) gsap.set(["[data-pane=left] [data-intro-left]", "[data-intro-right]"], { clearProps: "transform" });
+      if (swapped.current && swapTween.current && swapTween.current.progress() < 1) gsap.set(["[data-pane=left] [data-intro-left]", "[data-intro-right]"], { clearProps: "transform" });
       swapped.current = false;
       return;
     }
@@ -105,9 +112,49 @@ export function Shell() {
 
   const screen: View = isDesktop ? navView : shown;
 
+  // «Бесшовная перезагрузка»: обе части разъезжаются и выезжают заново.
+  // Так же работают клик по логотипу и Cmd/Ctrl+R / F5 (настоящая перезагрузка — после ухода секций).
+  const [tick, setTick] = useState(0);
+  const replaying = useRef(false);
+  const replay = useCallback((after?: () => void) => {
+    if (replaying.current) return;
+    replaying.current = true;
+    const finish = () => {
+      if (after) return after();
+      setProjectId(null);
+      setView("info");
+      setShown("info");
+      prevShown.current = "info";
+      swapped.current = false;
+      setTick((t) => t + 1);
+    };
+    if (reducedMotion()) return finish();
+    gsap
+      .timeline({ onComplete: finish })
+      .to("[data-intro-left]", { x: "-110%", duration: 0.35, stagger: 0.06, ease: "power2.in" }, 0)
+      .to("[data-intro-right]", { x: "110%", duration: 0.4, ease: "power2.in" }, 0);
+  }, []);
+
+  useLayoutEffect(() => {
+    if (!tick) return;
+    replaying.current = false;
+    playIntro();
+  }, [tick]);
+
+  useEffect(() => {
+    const h = (e: KeyboardEvent) => {
+      const reload = e.key === "F5" || ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "r");
+      if (!reload) return;
+      e.preventDefault();
+      replay(() => location.reload());
+    };
+    window.addEventListener("keydown", h);
+    return () => window.removeEventListener("keydown", h);
+  }, [replay]);
+
   return (
-    <div className="grid h-svh w-full grid-cols-1 grid-rows-[auto_minmax(0,1fr)] gap-1 overflow-hidden bg-light-3 p-1.5 antialiased lg:grid-cols-[30rem_minmax(0,1fr)] lg:gap-x-1 lg:p-1">
-      <NavBar view={navView} onView={go} locale={locale} nav={left.nav} desktop={isDesktop} />
+    <div key={tick} className="grid h-svh w-full grid-cols-1 grid-rows-[auto_minmax(0,1fr)] gap-1 overflow-hidden bg-light-3 p-1.5 antialiased lg:grid-cols-[30rem_minmax(0,1fr)] lg:gap-x-1 lg:p-1">
+      <NavBar view={navView} onView={go} locale={locale} nav={left.nav} desktop={isDesktop} onHome={() => replay()} />
 
       <div
         className={`${screen === "info" ? "flex" : "hidden lg:flex"} col-start-1 row-start-2 min-h-0 min-w-0`}

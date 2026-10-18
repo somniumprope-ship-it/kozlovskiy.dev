@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useLayoutEffect, useState, type ReactNode } from "react";
 import { api } from "../lib/api";
 import type { Content } from "./types";
 
@@ -28,11 +28,13 @@ export function ContentProvider({ children }: { children: ReactNode }) {
   const [content, setContent] = useState<Content | null>(() => window.__CONTENT__ ?? null);
   const [failed, setFailed] = useState(false);
 
+  // цвета из админки ставим до первой отрисовки, чтобы не мигала стандартная палитра
+  useLayoutEffect(() => {
+    if (content) applySiteTheme(content, !location.pathname.startsWith("/admin"));
+  }, [content]);
+
   useEffect(() => {
-    if (content) {
-      applySiteTheme(content, !location.pathname.startsWith("/admin"));
-      return;
-    }
+    if (content) return;
     api.content().then(setContent).catch(() => setFailed(true));
   }, [content]);
 
