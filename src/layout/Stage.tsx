@@ -148,9 +148,8 @@ export const Stage = memo(function Stage({ right, title, locale, openId, onOpen,
     const el = bodyRef.current;
     if (!el) return setShownId(openTile?.id ?? null);
     const tween = gsap.to(el, {
-      opacity: 0,
-      x: openTile ? -40 : 40,
-      duration: 0.25,
+      x: "110%",
+      duration: 0.45,
       ease: "power2.in",
       onComplete: () => setShownId(openTile?.id ?? null),
     });
@@ -162,7 +161,7 @@ export const Stage = memo(function Stage({ right, title, locale, openId, onOpen,
       first.current = false;
       return;
     }
-    if (bodyRef.current) gsap.fromTo(bodyRef.current, { opacity: 0, x: shownId ? 60 : -60 }, { opacity: 1, x: 0, duration: 0.5, ease: "power3.out" });
+    if (bodyRef.current) gsap.fromTo(bodyRef.current, { x: "110%" }, { x: 0, duration: 0.6, ease: "power3.out", clearProps: "transform" });
   }, [shownId]);
 
   const heading = title;

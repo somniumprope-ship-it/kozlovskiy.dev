@@ -9,7 +9,7 @@ export function ProjectTags({ project, locale, className = "" }: { project: Proj
   return (
     <ul className={`flex flex-wrap gap-1.5 ${className}`}>
       {tags.map((t) => (
-        <li key={t.id} className="rounded-plate border-2 border-dashed border-light-2 px-2.5 py-0.5 text-[0.8125rem] leading-5 text-dark-1 lg:text-sm">
+        <li key={t.id} className="rounded-plate border-2 border-dashed border-accent px-2.5 py-0.5 text-[0.8125rem] leading-5 text-dark-1 lg:text-sm">
           {pick(t.label, locale)}
         </li>
       ))}
