@@ -20,7 +20,7 @@ export function InfoPanel({ locale, onLocale, compact = false }: Props) {
   return (
     <article
       data-intro-left
-      className={`flex w-full flex-col rounded-plate bg-light-1 p-4 [--av-full:7.5rem] lg:[--av-full:9.5rem] ${
+      className={`flex w-full flex-col rounded-plate bg-light-1 p-4 ${compact ? "" : "flex-1"} [--av-full:7.5rem] lg:[--av-full:9.5rem] ${
         compact ? "[--av:calc(var(--av-full)/2)]" : "[--av:var(--av-full)]"
       }`}
     >
@@ -70,7 +70,7 @@ export function InfoPanel({ locale, onLocale, compact = false }: Props) {
         ) : null}
       </div>
 
-      <div className={`grid transition-[grid-template-rows] ${ease} ${compact ? "grid-rows-[0fr]" : "grid-rows-[1fr]"}`}>
+      <div className={`mt-auto grid transition-[grid-template-rows] ${ease} ${compact ? "grid-rows-[0fr]" : "grid-rows-[1fr]"}`}>
         <div className="min-h-0 overflow-hidden">
           <p className="pt-11 text-[1.25rem] leading-[1.15] font-normal wrap-break-word whitespace-pre-line text-dark-1 lg:pt-22">
             {pick(left.bio, locale)}

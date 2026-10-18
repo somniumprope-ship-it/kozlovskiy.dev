@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import type { Content } from "../content/types";
 import { api } from "../lib/api";
 import { kinescopeEmbed } from "../layout/VideoPlate";
-import { btn, ColorField, Field, LocField, MediaField, move, RowTools, Section, Text, uid } from "./fields";
+import { Area, btn, ColorField, Field, LocField, MediaField, move, RowTools, Section, Text, uid } from "./fields";
 
 type Props = { draft: Content; edit: (fn: (d: Content) => void) => void };
 
@@ -73,8 +73,8 @@ export function LeftTab({ draft, edit }: Props) {
         title="Видео-приветствие"
         hint="Вставьте ссылку на видео из Kinescope (ссылка «Поделиться», embed-ссылка или весь код вставки <iframe>). Видео появится слева вместо списка проектов."
       >
-        <Field label="Ссылка Kinescope">
-          <Text value={l.video.url} placeholder="https://kinescope.io/..." onChange={(v) => edit((d) => void (d.left.video.url = v))} />
+        <Field label="Код вставки или ссылка Kinescope" hint="Вставьте код целиком (<div><iframe …></iframe></div>) — видео растянется на всю плашку.">
+          <Area rows={4} value={l.video.url} onChange={(v) => edit((d) => void (d.left.video.url = v))} />
         </Field>
         {l.video.url && !kinescopeEmbed(l.video.url) ? (
           <span className="text-xs text-red-600">Не похоже на ссылку Kinescope — видео не будет показано.</span>
