@@ -6,7 +6,7 @@ import { ProjectTags, SiteLink } from "./projectBits";
 export function ProjectInfo({ tile, locale, onClose }: { tile: Tile; locale: Locale; onClose: () => void }) {
   const project = tile.project!;
   return (
-    <div data-project-plate className="relative z-2 flex min-h-40 flex-1 flex-col gap-4 rounded-plate bg-light-1 p-4">
+    <div data-project-plate data-intro-left className="relative z-2 flex min-h-40 flex-1 flex-col gap-4 rounded-plate bg-light-1 p-4">
       <button
         type="button"
         onClick={onClose}
