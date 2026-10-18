@@ -17,6 +17,9 @@ type Props = {
 
 type Mode = "home" | "project";
 
+/** Длительность сжатия карточки с фото (duration-500 в InfoPanel) */
+const COMPACT_SECONDS = 0.5;
+
 /**
  * Левая колонка: свой скролл, высота ограничена экраном.
  * Открытие проекта: марки, видео и почта по очереди уезжают влево → карточка с фото сжимается →
@@ -29,7 +32,7 @@ export function InfoPane({ locale, onLocale, project, onCloseProject }: Props) {
   const [held, setHeld] = useState<Tile | null>(project);
   const modeRef = useRef<Mode>(mode);
   const prevMode = useRef<Mode>(mode);
-  const busy = useRef<gsap.core.Tween | null>(null);
+  const busy = useRef<gsap.core.Animation | null>(null);
 
   useEffect(() => {
     const want: Mode = project ? "project" : "home";
@@ -46,22 +49,29 @@ export function InfoPane({ locale, onLocale, project, onCloseProject }: Props) {
         duration: 0.4,
         stagger: 0.08,
         ease: "power2.in",
+        // сначала сжимается карточка с фото, и только когда она закончила — выезжает плашка проекта
         onComplete: () => {
-          modeRef.current = "project";
-          setMode("project");
           setCompact(true);
+          busy.current = gsap.delayedCall(COMPACT_SECONDS, () => {
+            modeRef.current = "project";
+            setMode("project");
+          });
         },
       });
     } else {
-      setCompact(false);
       const plate = root.querySelector("[data-project-plate]");
       const finish = () => {
         modeRef.current = "home";
         setMode("home");
         setHeld(null);
       };
-      if (plate) busy.current = gsap.to(plate, { x: "-110%", duration: 0.4, ease: "power2.in", onComplete: finish });
-      else finish();
+      // обратный порядок: плашка проекта уезжает → карточка с фото разворачивается → возвращаются остальные секции
+      const expand = () => {
+        setCompact(false);
+        busy.current = gsap.delayedCall(COMPACT_SECONDS, finish);
+      };
+      if (plate) busy.current = gsap.to(plate, { x: "-110%", duration: 0.4, ease: "power2.in", onComplete: expand });
+      else expand();
     }
   }, [project, contentRef]);
 
