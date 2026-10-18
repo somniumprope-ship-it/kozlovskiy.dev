@@ -103,7 +103,7 @@ type StageProps = {
 };
 
 /** Страница проекта: те же квадратики, что и на главной, пока без финальной сетки. */
-function ProjectGallery({ tile, locale, desktop }: { tile: Tile; locale: Locale; desktop: boolean }) {
+function ProjectGallery({ tile }: { tile: Tile }) {
   const { wrapperRef, contentRef } = useSmoothScroll<HTMLDivElement>();
   const project = tile.project!;
   const gallery = project.gallery.length ? project.gallery : [tile.media];
@@ -111,9 +111,6 @@ function ProjectGallery({ tile, locale, desktop }: { tile: Tile; locale: Locale;
   return (
     <div ref={wrapperRef} data-scroll="right" className="h-full overflow-y-auto overscroll-contain">
       <div ref={contentRef} className="flex flex-col gap-2">
-        {!desktop ? (
-          <p className="px-1 pt-1 text-base leading-6 whitespace-pre-line text-dark-1">{pick(project.body, locale)}</p>
-        ) : null}
         <div className="grid grid-cols-2 gap-2 lg:grid-cols-3">
           {gallery.map((m, n) => (
             <div key={n} className="aspect-square overflow-hidden rounded-plate bg-light-2">
@@ -169,6 +166,31 @@ export const Stage = memo(function Stage({ right, title, locale, openId, onOpen,
 
   const heading = title;
 
+  // Телефон, открыт проект: две отдельные плашки — маленькая с текстом и кнопкой «Назад», под ней галерея со скроллом
+  if (shown && !isDesktop) {
+    return (
+      <section data-intro-right className="flex h-full min-h-0 w-full min-w-0 flex-col gap-1">
+        <div ref={bodyRef} className="flex size-full min-h-0 flex-col gap-1">
+          <div className="flex max-h-[50%] shrink-0 flex-col gap-4 overflow-y-auto rounded-plate bg-light-1 p-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex w-fit items-center gap-2 rounded-plate bg-light-2 px-3 py-1 text-base leading-6 text-dark-1"
+            >
+              <span aria-hidden>←</span>
+              {locale === "ru" ? "Назад" : "Back"}
+            </button>
+            <h1 className="text-[1.0625rem] leading-[1.15] text-dark-1">{pick(shown.project!.title, locale)}</h1>
+            <p className="text-base leading-6 whitespace-pre-line text-dark-1">{pick(shown.project!.body, locale)}</p>
+          </div>
+          <div className="min-h-0 flex-1 overflow-hidden rounded-plate bg-light-1 p-1.5">
+            <ProjectGallery key={shown.id} tile={shown} />
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section data-intro-right className="flex h-full min-h-0 w-full min-w-0 flex-col rounded-plate bg-light-1 p-1.5">
       {shown ? (
@@ -188,7 +210,7 @@ export const Stage = memo(function Stage({ right, title, locale, openId, onOpen,
       <div className="relative min-h-0 flex-1 overflow-hidden rounded-plate">
         <div ref={bodyRef} className="size-full">
           {shown ? (
-            <ProjectGallery key={shown.id} tile={shown} locale={locale} desktop={isDesktop} />
+            <ProjectGallery key={shown.id} tile={shown} />
           ) : (
             <Grid items={items} onOpen={onOpen} columnCount={isDesktop ? 3 : 2} />
           )}
