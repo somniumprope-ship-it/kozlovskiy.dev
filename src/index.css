@@ -6,7 +6,7 @@
   --color-light-2: #f2f2f2;
   --color-light-3: #d9d9d9;
   --color-dark-1: #0d0d0d;
-  --color-accent: #3d7aed;
+  --color-accent: #ff006e;
   /* Единое скругление всех плашек: 10px на экране 1440×900, дальше масштабируется вместе с интерфейсом */
   --radius-plate: 0.625rem;
 

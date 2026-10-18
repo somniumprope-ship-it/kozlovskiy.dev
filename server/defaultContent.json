@@ -1,7 +1,7 @@
 {
   "site": {
     "title": "Kozlovskiy — Independent Designer",
-    "accent": "#3d7aed",
+    "accent": "#ff006e",
     "background": "#d9d9d9",
     "plate": "#ffffff",
     "chip": "#f2f2f2",
@@ -115,7 +115,7 @@
       }
     },
     "emailButton": {
-      "fill": "#3d7aed",
+      "fill": "#ff006e",
       "border": "",
       "text": "#ffffff"
     },

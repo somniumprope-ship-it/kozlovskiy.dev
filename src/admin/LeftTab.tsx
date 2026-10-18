@@ -34,7 +34,7 @@ function Subscribers() {
 export function LeftTab({ draft, edit }: Props) {
   const l = draft.left;
   if (!l.video) l.video = { url: "" };
-  if (!l.emailButton) l.emailButton = { fill: "", border: "#3d7aed", text: "" };
+  if (!l.emailButton) l.emailButton = { fill: "", border: "#ff006e", text: "" };
 
   return (
     <div className="flex flex-col gap-4">

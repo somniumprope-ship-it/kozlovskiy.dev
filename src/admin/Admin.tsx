@@ -119,12 +119,12 @@ function Editor({ initial, onLogout }: { initial: Content; onLogout: () => void 
           <Field label="Название вкладки браузера">
             <Text value={draft.site.title} onChange={(v) => edit((d) => void (d.site.title = v))} />
           </Field>
-          <ColorField label="Акцентный цвет" hint="Активные элементы, точка в логотипе, рамка почты." value={draft.site.accent} fallback="#3d7aed" onChange={(v) => edit((d) => void (d.site.accent = v))} />
+          <ColorField label="Акцентный цвет" hint="Активные элементы, точка в логотипе, рамка почты." value={draft.site.accent} fallback="#ff006e" onChange={(v) => edit((d) => void (d.site.accent = v))} />
           <ColorField label="Фон сайта" hint="Тёмно-серое поле вокруг плашек." value={draft.site.background} fallback="#d9d9d9" onChange={(v) => edit((d) => void (d.site.background = v))} />
           <ColorField label="Цвет больших плашек" hint="Белые плашки слева и справа." value={draft.site.plate} fallback="#ffffff" onChange={(v) => edit((d) => void (d.site.plate = v))} />
           <ColorField label="Цвет подложек" hint="«Инфо», «Работы», кнопки соцсетей." value={draft.site.chip} fallback="#f2f2f2" onChange={(v) => edit((d) => void (d.site.chip = v))} />
           <ColorField label="Цвет текста" value={draft.site.text} fallback="#0d0d0d" onChange={(v) => edit((d) => void (d.site.text = v))} />
-          <button type="button" className={`${btn} self-start`} onClick={() => edit((d) => void Object.assign(d.site, { accent: "#3d7aed", background: "#d9d9d9", plate: "#ffffff", chip: "#f2f2f2", text: "#0d0d0d" }))}>
+          <button type="button" className={`${btn} self-start`} onClick={() => edit((d) => void Object.assign(d.site, { accent: "#ff006e", background: "#d9d9d9", plate: "#ffffff", chip: "#f2f2f2", text: "#0d0d0d" }))}>
             Сбросить палитру
           </button>
         </Section>

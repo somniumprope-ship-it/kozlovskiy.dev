@@ -37,7 +37,15 @@ export function InfoPane({ locale, onLocale, project, onCloseProject }: Props) {
   useEffect(() => {
     const want: Mode = project ? "project" : "home";
     if (project) setHeld(project);
-    if (want === modeRef.current) return;
+    if (want === modeRef.current) {
+      // проект закрыли посреди открытия (секции уезжают или карточка сжимается): вернуть всё как было
+      if (want === "home" && busy.current && busy.current.progress() < 1) {
+        busy.current.kill();
+        setCompact(false);
+        gsap.set(contentRef.current?.querySelectorAll("[data-leave]") ?? [], { clearProps: "transform" });
+      }
+      return;
+    }
     busy.current?.kill();
     const root = contentRef.current;
     if (!root) return;
