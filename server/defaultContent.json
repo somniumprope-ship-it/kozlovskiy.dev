@@ -78,22 +78,22 @@
         "url": ""
       }
     ],
-    "email": "hello@kozlovskiy.dev",
+    "email": "kozlovskiydes@gmail.com",
     "socials": [
       {
         "id": "s1",
-        "label": "X",
-        "url": ""
+        "label": "tg",
+        "url": "http://t.me/vi_kozlovskiy"
       },
       {
         "id": "s2",
-        "label": "in",
-        "url": ""
+        "label": "vk",
+        "url": "https://vk.ru/vi_kozlovskiy"
       },
       {
         "id": "s3",
-        "label": "ig",
-        "url": ""
+        "label": "mx",
+        "url": "https://max.ru/u/f9LHodD0cOLE-Dtd4e2JlTXdbFLDdpj_q0K-V_McpjSeu8rKJL8FRIa62-I"
       }
     ],
     "contact": {

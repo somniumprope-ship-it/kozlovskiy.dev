@@ -25,7 +25,7 @@ export function FooterBar({ onContact }: { onContact: () => void }) {
             target="_blank"
             rel="noreferrer"
             aria-label={s.label}
-            className="grid size-9 place-items-center rounded-plate bg-light-2 text-[0.6875rem] uppercase transition-colors duration-200 hover:bg-accent/20"
+            className="grid size-9 place-items-center rounded-plate bg-light-2 text-[0.6875rem] transition-colors duration-200 hover:bg-accent/20"
           >
             {s.label.slice(0, 2)}
           </a>
