@@ -15,7 +15,7 @@ export function ProjectInfo({ tile, locale, onClose }: { tile: Tile; locale: Loc
         <span aria-hidden>←</span>
         {locale === "ru" ? "Назад" : "Back"}
       </button>
-      <div className="mt-6 flex flex-col gap-3">
+      <div className="mt-12 flex flex-col gap-3">
         <ProjectTags project={project} locale={locale} />
         <h1 className="text-[1.25rem] leading-[1.15] text-dark-1">{pick(project.title, locale)}</h1>
       </div>
