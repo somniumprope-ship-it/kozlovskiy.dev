@@ -1,5 +1,6 @@
 import type { Locale, Tile } from "../content/types";
 import { pick } from "../lib/pick";
+import { ProjectTags, SiteLink } from "./projectBits";
 
 /** Плашка с описанием проекта: занимает всё место под сжавшейся карточкой с фото. */
 export function ProjectInfo({ tile, locale, onClose }: { tile: Tile; locale: Locale; onClose: () => void }) {
@@ -14,8 +15,12 @@ export function ProjectInfo({ tile, locale, onClose }: { tile: Tile; locale: Loc
         <span aria-hidden>←</span>
         {locale === "ru" ? "Назад" : "Back"}
       </button>
-      <h1 className="text-[1.25rem] leading-[1.15] text-dark-1">{pick(project.title, locale)}</h1>
+      <div className="mt-6 flex flex-col gap-3">
+        <ProjectTags project={project} locale={locale} />
+        <h1 className="text-[1.25rem] leading-[1.15] text-dark-1">{pick(project.title, locale)}</h1>
+      </div>
       <p className="text-base leading-6 whitespace-pre-line text-dark-1">{pick(project.body, locale)}</p>
+      <SiteLink project={project} locale={locale} />
     </div>
   );
 }

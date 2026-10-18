@@ -183,7 +183,12 @@
               "w": 900,
               "h": 900
             }
-          ]
+          ],
+          "tags": [
+            "design",
+            "layout"
+          ],
+          "site": "https://kozlovskiy.dev"
         }
       }
     ]

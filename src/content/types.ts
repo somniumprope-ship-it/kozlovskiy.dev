@@ -18,7 +18,15 @@ export type Work = {
 
 export type Social = { id: string; label: string; url: string };
 
-export type Project = { title: Loc; body: Loc; gallery: Media[] };
+export type Project = {
+  title: Loc;
+  body: Loc;
+  gallery: Media[];
+  /** id тегов из src/content/tags.ts */
+  tags?: string[];
+  /** Ссылка кнопки «На сайт» */
+  site?: string;
+};
 
 export type Tile = {
   id: string;

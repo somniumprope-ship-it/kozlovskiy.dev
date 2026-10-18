@@ -2,6 +2,7 @@ import gsap from "gsap";
 import { memo, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { Content, Locale, Media, Tile } from "../content/types";
 import { pick } from "../lib/pick";
+import { ProjectTags, SiteLink } from "./projectBits";
 import { useIsDesktop } from "../engine/useIsDesktop";
 import { useSmoothScroll } from "../engine/useSmoothScroll";
 import { MediaView } from "./Media";
@@ -172,16 +173,20 @@ export const Stage = memo(function Stage({ right, title, locale, openId, onOpen,
       <section data-intro-right className="flex h-full min-h-0 w-full min-w-0 flex-col gap-1">
         <div ref={bodyRef} className="flex size-full min-h-0 flex-col gap-1">
           <div className="flex max-h-[50%] shrink-0 flex-col gap-4 overflow-y-auto rounded-plate bg-light-1 p-4">
-            <button
-              type="button"
-              onClick={onClose}
-              className="flex w-fit items-center gap-2 rounded-plate bg-light-2 px-3 py-1 text-base leading-6 text-dark-1"
-            >
-              <span aria-hidden>←</span>
-              {locale === "ru" ? "Назад" : "Back"}
-            </button>
+            <div className="flex items-start justify-between gap-3">
+              <button
+                type="button"
+                onClick={onClose}
+                className="flex shrink-0 items-center gap-2 rounded-plate bg-light-2 px-3 py-1 text-base leading-6 text-dark-1"
+              >
+                <span aria-hidden>←</span>
+                {locale === "ru" ? "Назад" : "Back"}
+              </button>
+              <ProjectTags project={shown.project!} locale={locale} className="justify-end pt-0.5" />
+            </div>
             <h1 className="text-[1.0625rem] leading-[1.15] text-dark-1">{pick(shown.project!.title, locale)}</h1>
             <p className="text-base leading-6 whitespace-pre-line text-dark-1">{pick(shown.project!.body, locale)}</p>
+            <SiteLink project={shown.project!} locale={locale} />
           </div>
           <div className="min-h-0 flex-1 overflow-hidden rounded-plate bg-light-1 p-1.5">
             <ProjectGallery key={shown.id} tile={shown} />
