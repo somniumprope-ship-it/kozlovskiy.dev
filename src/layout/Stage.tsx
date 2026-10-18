@@ -74,7 +74,7 @@ function TileView({ tile, index, onOpen }: { tile: Tile | null; index: number; o
         : tile?.url
           ? { href: tile.url, target: "_blank", rel: "noreferrer" }
           : {})}
-      className={`group relative block w-full overflow-hidden rounded-plate bg-light-2 text-left ${opens ? "cursor-pointer" : ""}`}
+      data-tile className={`group relative block w-full overflow-hidden rounded-plate bg-light-2 text-left ${opens ? "cursor-pointer" : ""}`}
       style={{ aspectRatio: ratio }}
     >
       {tile ? (
@@ -114,7 +114,7 @@ function ProjectGallery({ tile }: { tile: Tile }) {
       <div ref={contentRef} className="flex flex-col gap-2">
         <div className="grid grid-cols-2 gap-2 lg:grid-cols-3">
           {gallery.map((m, n) => (
-            <div key={n} className="aspect-square overflow-hidden rounded-plate bg-light-2">
+            <div key={n} data-tile className="aspect-square overflow-hidden rounded-plate bg-light-2">
               <MediaView media={m} className="size-full object-cover" />
             </div>
           ))}
@@ -143,16 +143,25 @@ export const Stage = memo(function Stage({ right, title, locale, openId, onOpen,
     return [...real, ...Array.from({ length: pad }, (_, k) => ({ tile: null, index: real.length + k }))];
   }, [right.tiles]);
 
+  // Порядок «слева направо, сверху вниз», чтобы плитки уходили и приходили волной по рядам
+  const tilesOf = (root: HTMLElement | null) =>
+    root
+      ? Array.from(root.querySelectorAll<HTMLElement>("[data-tile]")).sort((x, y) => {
+          const a = x.getBoundingClientRect(), b = y.getBoundingClientRect();
+          return Math.round(a.top / 40) - Math.round(b.top / 40) || a.left - b.left;
+        })
+      : [];
+
   useEffect(() => {
     if ((openTile?.id ?? null) === shownId) return;
     const el = bodyRef.current;
     if (!el) return setShownId(openTile?.id ?? null);
-    const tween = gsap.to(el, {
-      x: "110%",
-      duration: 0.45,
-      ease: "power2.in",
-      onComplete: () => setShownId(openTile?.id ?? null),
-    });
+    const done = () => setShownId(openTile?.id ?? null);
+    const tiles = tilesOf(el);
+    // подложка стоит на месте, плитки по очереди уезжают вправо
+    const tween = tiles.length
+      ? gsap.to(tiles, { x: "110%", duration: 0.7, stagger: 0.06, ease: "power2.in", onComplete: done })
+      : gsap.to(el, { x: "110%", duration: 0.6, ease: "power2.in", onComplete: done });
     return () => void tween.kill();
   }, [openTile, shownId]);
 
@@ -161,7 +170,13 @@ export const Stage = memo(function Stage({ right, title, locale, openId, onOpen,
       first.current = false;
       return;
     }
-    if (bodyRef.current) gsap.fromTo(bodyRef.current, { x: "110%" }, { x: 0, duration: 0.6, ease: "power3.out", clearProps: "transform" });
+    const el = bodyRef.current;
+    if (!el) return;
+    gsap.set(el, { clearProps: "transform" });
+    const tiles = tilesOf(el);
+    // небольшая пауза, потом плитки по очереди выезжают справа
+    if (tiles.length) gsap.fromTo(tiles, { x: "110%" }, { x: 0, duration: 0.9, delay: 0.3, stagger: 0.07, ease: "power3.out", clearProps: "transform" });
+    else gsap.fromTo(el, { x: "110%" }, { x: 0, duration: 0.8, delay: 0.3, ease: "power3.out", clearProps: "transform" });
   }, [shownId]);
 
   const heading = title;
