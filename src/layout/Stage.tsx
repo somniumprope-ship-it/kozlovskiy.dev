@@ -177,7 +177,7 @@ export const Stage = memo(function Stage({ right, title, locale, openId, onOpen,
               <button
                 type="button"
                 onClick={onClose}
-                className="flex shrink-0 items-center gap-2 rounded-plate bg-light-2 px-3 py-1 text-base leading-6 text-dark-1"
+                className="flex shrink-0 items-center gap-2 rounded-plate bg-light-2 px-3 py-1 text-[0.8125rem] leading-6 text-dark-1"
               >
                 <span aria-hidden>←</span>
                 {locale === "ru" ? "Назад" : "Back"}
