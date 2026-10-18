@@ -155,9 +155,11 @@ export const Stage = memo(function Stage({ right, title, locale, openId, onOpen,
       : [];
 
   // Сдвиг ровно до края сцены (а не «110% своей ширины»): иначе плитка исчезает раньше, чем доезжает, и движение «зависает»
-  const offscreen = (root: HTMLElement) => {
+  // Считаем сдвиги сразу для всех плиток (один раз, пока они на своих местах), иначе при пересчёте плитка уже сдвинута
+  const offscreen = (root: HTMLElement, tiles: HTMLElement[]) => {
     const edge = root.getBoundingClientRect().right;
-    return (_: number, el: Element) => edge - el.getBoundingClientRect().left + 8;
+    const dx = tiles.map((el) => edge - el.getBoundingClientRect().left + 8);
+    return (i: number) => dx[i];
   };
 
   useEffect(() => {
@@ -168,7 +170,7 @@ export const Stage = memo(function Stage({ right, title, locale, openId, onOpen,
     const tiles = tilesOf(el, true);
     // подложка стоит на месте, плитки по очереди уезжают вправо
     const tween = tiles.length
-      ? gsap.to(tiles, { x: offscreen(el), duration: 0.6, stagger: { amount: OUT_END - 0.6 }, ease: "power1.in", onComplete: done })
+      ? gsap.to(tiles, { x: offscreen(el, tiles), duration: 0.6, stagger: { amount: OUT_END - 0.6 }, ease: "power1.in", onComplete: done })
       : gsap.to(el, { x: "110%", duration: 0.7, ease: "power2.in", onComplete: done });
     return () => void tween.kill();
   }, [openTile, shownId]);
@@ -183,7 +185,7 @@ export const Stage = memo(function Stage({ right, title, locale, openId, onOpen,
     gsap.set(el, { clearProps: "transform" });
     const tiles = tilesOf(el, false);
     // небольшая пауза, потом плитки по очереди выезжают справа
-    if (tiles.length) gsap.fromTo(tiles, { x: offscreen(el) }, { x: 0, duration: 0.9, delay: PAUSE, stagger: { amount: 0.5 }, ease: "power3.out", clearProps: "transform" });
+    if (tiles.length) gsap.fromTo(tiles, { x: offscreen(el, tiles) }, { x: 0, duration: 0.9, delay: PAUSE, stagger: { amount: 0.5 }, ease: "power3.out", clearProps: "transform" });
     else gsap.fromTo(el, { x: "110%" }, { x: 0, duration: 0.8, delay: PAUSE, ease: "power3.out", clearProps: "transform" });
   }, [shownId]);
 
