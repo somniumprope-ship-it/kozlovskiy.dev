@@ -72,7 +72,7 @@ export function InfoPanel({ locale, onLocale, compact = false }: Props) {
 
       <div className={`mt-auto grid transition-[grid-template-rows] ${ease} ${compact ? "grid-rows-[0fr]" : "grid-rows-[1fr]"}`}>
         <div className="min-h-0 overflow-hidden">
-          <p className="pt-11 text-[1.25rem] leading-[1.15] font-normal wrap-break-word whitespace-pre-line text-dark-1 lg:pt-22">
+          <p className="pt-6 text-[1.0625rem] leading-[1.15] font-normal wrap-break-word whitespace-pre-line text-dark-1 lg:pt-22 lg:text-[1.25rem]">
             {pick(left.bio, locale)}
           </p>
         </div>

@@ -26,7 +26,7 @@
   16px при 1440×900; меньше — по более тесной из сторон.
 */
 html {
-  font-size: 16px;
+  font-size: 14.5px;
 }
 @media (min-width: 1024px) {
   html {
