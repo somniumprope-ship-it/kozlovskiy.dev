@@ -22,17 +22,17 @@ export function VideoPlate({ locale }: { locale: Locale }) {
   const embed = kinescopeEmbed(useContent().left.video?.url ?? "");
 
   return (
-    <div data-intro-left data-leave className="relative z-2 aspect-video shrink-0 overflow-hidden rounded-plate bg-dark-1">
+    <div data-intro-left data-leave className="relative z-2 aspect-video shrink-0 isolate transform-gpu overflow-hidden rounded-plate bg-light-2">
       {embed ? (
         <iframe
           src={embed}
           title="Video"
-          className="absolute inset-0 size-full border-0"
+          className="absolute inset-0 size-full scale-[1.015] border-0"
           allow="autoplay; fullscreen; picture-in-picture; encrypted-media; gyroscope; accelerometer; clipboard-write"
           allowFullScreen
         />
       ) : (
-        <div className="grid size-full place-items-center text-sm text-light-1/50">{locale === "ru" ? "Видео" : "Video"}</div>
+        <div className="grid size-full place-items-center text-sm text-dark-1/40">{locale === "ru" ? "Видео" : "Video"}</div>
       )}
     </div>
   );
