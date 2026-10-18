@@ -1,5 +1,5 @@
 import gsap from "gsap";
-import { memo, useEffect, useLayoutEffect, useMemo, useRef, useState, type PointerEvent } from "react";
+import { memo, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { Content, Locale, Media, Tile } from "../content/types";
 import { pick } from "../lib/pick";
 import { useIsDesktop } from "../engine/useIsDesktop";
@@ -8,7 +8,6 @@ import { MediaView } from "./Media";
 
 type Right = Content["right"];
 
-const COLUMNS = 3;
 
 // Пока в админке нет файлов — показываем градиентные заглушки, чтобы был виден ритм сетки
 const palettes = [
@@ -33,12 +32,12 @@ function Placeholder({ index }: { index: number }) {
 }
 
 /** Десктоп: 3 колонки, плитка уходит в самую короткую — так колонки выравниваются, а порядок остаётся читаемым. */
-function Grid({ items, onOpen }: { items: Item[]; onOpen: (id: string) => void }) {
+function Grid({ items, onOpen, columnCount }: { items: Item[]; onOpen: (id: string) => void; columnCount: number }) {
   const { wrapperRef, contentRef } = useSmoothScroll<HTMLDivElement>();
 
   const columns = useMemo(() => {
-    const cols: Item[][] = Array.from({ length: COLUMNS }, () => []);
-    const heights = Array(COLUMNS).fill(0);
+    const cols: Item[][] = Array.from({ length: columnCount }, () => []);
+    const heights = Array(columnCount).fill(0);
     for (const item of items) {
       const r = item.tile ? ratioOf(item.tile.media, 4 / 3) : ratios[item.index % ratios.length];
       const shortest = heights.indexOf(Math.min(...heights));
@@ -46,7 +45,7 @@ function Grid({ items, onOpen }: { items: Item[]; onOpen: (id: string) => void }
       heights[shortest] += 1 / r;
     }
     return cols;
-  }, [items]);
+  }, [items, columnCount]);
 
   return (
     <div ref={wrapperRef} data-scroll="right" className="h-full overflow-y-auto overscroll-contain">
@@ -91,92 +90,6 @@ function TileView({ tile, index, onOpen }: { tile: Tile | null; index: number; o
         </h2>
       ) : null}
     </Tag>
-  );
-}
-
-/** Мобильный: один слот на весь экран. Тап/свайп — следующий, плюс автосмена. Скролла нет. */
-function Slideshow({ items, seconds, onOpen, locale }: { items: Item[]; seconds: number; onOpen: (id: string) => void; locale: Locale }) {
-  const [i, setI] = useState(0);
-  const [visible, setVisible] = useState(true);
-  const rootRef = useRef<HTMLDivElement | null>(null);
-  const down = useRef<{ x: number; y: number } | null>(null);
-  const count = items.length;
-
-  useEffect(() => {
-    const el = rootRef.current;
-    if (!el) return;
-    const io = new IntersectionObserver(([e]) => setVisible(e.isIntersecting));
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-
-  useEffect(() => {
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (!seconds || count < 2 || !visible || reduced) return;
-    const id = window.setTimeout(() => setI((n) => (n + 1) % count), seconds * 1000);
-    return () => window.clearTimeout(id);
-  }, [i, seconds, count, visible]);
-
-  const step = (d: number) => setI((n) => (n + d + count) % count);
-
-  const onDown = (e: PointerEvent) => (down.current = { x: e.clientX, y: e.clientY });
-  const onUp = (e: PointerEvent) => {
-    const s = down.current;
-    down.current = null;
-    if (!s || count < 2) return;
-    const dx = e.clientX - s.x;
-    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(e.clientY - s.y)) step(dx < 0 ? 1 : -1);
-    else if (Math.abs(dx) < 10) step(1);
-  };
-
-  return (
-    <div
-      ref={rootRef}
-      className="relative size-full touch-pan-y select-none"
-      onPointerDown={onDown}
-      onPointerUp={onUp}
-    >
-      {items.map(({ tile, index }, n) => (
-        <div
-          key={tile?.id ?? `p${index}`}
-          className={`absolute inset-0 transition-opacity duration-500 ${n === i ? "opacity-100" : "pointer-events-none opacity-0"}`}
-        >
-          {tile ? (
-            <MediaView media={tile.media} active={n === i} eager={n === 0} className="size-full object-cover" />
-          ) : (
-            <Placeholder index={index} />
-          )}
-          {tile?.caption ? (
-            <h2 className="absolute bottom-10 left-4 text-[1.25rem] leading-[1.15] text-white mix-blend-difference">
-              {tile.caption}
-            </h2>
-          ) : null}
-        </div>
-      ))}
-
-      {items[i]?.tile?.project ? (
-        <button
-          type="button"
-          onPointerDown={(e) => e.stopPropagation()}
-          onPointerUp={(e) => e.stopPropagation()}
-          onClick={() => onOpen(items[i].tile!.id)}
-          className="absolute top-3 right-3 rounded-plate bg-light-1 px-3 py-1 text-base leading-6 text-dark-1"
-        >
-          {locale === "ru" ? "Подробнее" : "Details"}
-        </button>
-      ) : null}
-
-      {count > 1 ? (
-        <div className="pointer-events-none absolute inset-x-0 bottom-3 flex justify-center gap-1.5">
-          {items.map((_, n) => (
-            <span
-              key={n}
-              className={`h-1 rounded-full bg-white mix-blend-difference transition-all duration-300 ${n === i ? "w-5" : "w-1.5 opacity-50"}`}
-            />
-          ))}
-        </div>
-      ) : null}
-    </div>
   );
 }
 
@@ -268,17 +181,16 @@ export const Stage = memo(function Stage({ right, title, locale, openId, onOpen,
           {heading}
         </button>
       ) : (
-        <div className="mb-1.5 w-fit shrink-0 rounded-plate bg-light-2 px-3 py-1 text-base leading-6 text-dark-1">{heading}</div>
+        // на телефоне заголовок уже есть в шапке («Работы»), поэтому плашку там не дублируем
+        <div className="mb-1.5 hidden w-fit shrink-0 rounded-plate bg-light-2 px-3 py-1 text-base leading-6 text-dark-1 lg:block">{heading}</div>
       )}
 
       <div className="relative min-h-0 flex-1 overflow-hidden rounded-plate">
         <div ref={bodyRef} className="size-full">
           {shown ? (
             <ProjectGallery key={shown.id} tile={shown} locale={locale} desktop={isDesktop} />
-          ) : isDesktop ? (
-            <Grid items={items} onOpen={onOpen} />
           ) : (
-            <Slideshow items={items} seconds={right.autoplaySeconds} onOpen={onOpen} locale={locale} />
+            <Grid items={items} onOpen={onOpen} columnCount={isDesktop ? 3 : 2} />
           )}
         </div>
       </div>

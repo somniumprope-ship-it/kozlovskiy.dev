@@ -1,7 +1,7 @@
 import { useRef, useState, type DragEvent } from "react";
 import type { Content, Media } from "../content/types";
 import { uploadFiles } from "../lib/api";
-import { btn, errorText, Field, LocField, move, Preview, RowTools, Section, Text, uid } from "./fields";
+import { btn, errorText, LocField, move, Preview, RowTools, Section, Text, uid } from "./fields";
 
 type Props = { draft: Content; edit: (fn: (d: Content) => void) => void };
 
@@ -77,21 +77,9 @@ export function RightTab({ draft, edit }: Props) {
 
   return (
     <div className="flex flex-col gap-4">
-      <Section title="Настройки правой части">
-        <div className="grid gap-4 md:grid-cols-2">
-          <Field label="Смена слайдов на телефоне, секунд" hint="На телефоне правая часть — один экран без скролла. 0 — не менять автоматически.">
-            <Text
-              type="number"
-              value={String(r.autoplaySeconds)}
-              onChange={(v) => edit((d) => void (d.right.autoplaySeconds = Math.max(0, Number(v) || 0)))}
-            />
-          </Field>
-        </div>
-      </Section>
-
       <Section
         title="Фото и анимации"
-        hint="JPG, PNG, WebP, AVIF, GIF, SVG, а также MP4 и WebM (видео играет без звука по кругу — так удобнее всего делать анимации). На компьютере плитки идут в три колонки по своим пропорциям, на телефоне показываются по одной на весь экран."
+        hint="JPG, PNG, WebP, AVIF, GIF, SVG, а также MP4 и WebM (видео играет без звука по кругу — так удобнее всего делать анимации). На компьютере плитки идут в три колонки по своим пропорциям, на телефоне — в две колонки."
       >
         <div
           onDragOver={(e) => {
