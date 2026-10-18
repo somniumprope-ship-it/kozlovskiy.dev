@@ -22,13 +22,8 @@ export function NavBar({ view, onView, locale, nav, desktop }: Props) {
 
   return (
     <nav data-intro-left className="relative z-2 flex h-11 items-center justify-between rounded-plate bg-light-1 py-1.5 pr-1.5 pl-4">
-      <button
-        type="button"
-        aria-label="Home"
-        className="grid size-7 place-items-center rounded-md bg-dark-1"
-        onClick={() => onView("info")}
-      >
-        <span className="block size-2 rounded-full bg-accent" />
+      <button type="button" aria-label="Home" className="text-base leading-6 text-dark-1" onClick={() => onView("info")}>
+        kozlovskiy
       </button>
 
       <div className="flex items-center">
