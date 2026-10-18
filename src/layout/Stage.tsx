@@ -184,7 +184,7 @@ export const Stage = memo(function Stage({ right, title, locale, openId, onOpen,
               </button>
               <ProjectTags project={shown.project!} locale={locale} className="justify-end pt-0.5" />
             </div>
-            <h1 className="text-[1.0625rem] leading-[1.15] text-dark-1">{pick(shown.project!.title, locale)}</h1>
+            <h1 className="text-[1.0625rem] leading-[1.15] font-[600] text-dark-1">{pick(shown.project!.title, locale)}</h1>
             <p className="text-base leading-6 whitespace-pre-line text-dark-1">{pick(shown.project!.body, locale)}</p>
             <SiteLink project={shown.project!} locale={locale} />
           </div>

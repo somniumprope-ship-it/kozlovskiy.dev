@@ -17,7 +17,7 @@ export function ProjectInfo({ tile, locale, onClose }: { tile: Tile; locale: Loc
       </button>
       <div className="mt-12 flex flex-col gap-3">
         <ProjectTags project={project} locale={locale} />
-        <h1 className="text-[1.25rem] leading-[1.15] text-dark-1">{pick(project.title, locale)}</h1>
+        <h1 className="text-[1.25rem] leading-[1.15] font-[600] text-dark-1">{pick(project.title, locale)}</h1>
       </div>
       <p className="text-base leading-6 whitespace-pre-line text-dark-1">{pick(project.body, locale)}</p>
       <SiteLink project={project} locale={locale} />

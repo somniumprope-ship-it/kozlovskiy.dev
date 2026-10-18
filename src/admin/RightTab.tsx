@@ -155,20 +155,15 @@ export function RightTab({ draft, edit }: Props) {
                         <LocField label="Название" value={t.project.title} onChange={(v) => edit((d) => void (d.right.tiles[i].project!.title = v))} />
                         <LocField label="Текст о проекте" multiline rows={5} value={t.project.body} onChange={(v) => edit((d) => void (d.right.tiles[i].project!.body = v))} />
                         <div className="flex flex-col gap-1.5">
-                          <span className="font-medium">Теги</span>
+                          <span className="font-medium">Тег (один)</span>
                           <div className="flex flex-wrap gap-x-4 gap-y-1">
-                            {PROJECT_TAGS.map((tag) => (
+                            {[{ id: "", label: { ru: "Без тега", en: "" } }, ...PROJECT_TAGS].map((tag) => (
                               <label key={tag.id} className="flex items-center gap-2">
                                 <input
-                                  type="checkbox"
-                                  checked={!!t.project?.tags?.includes(tag.id)}
-                                  onChange={(e) =>
-                                    edit((d) => {
-                                      const pr = d.right.tiles[i].project!;
-                                      const rest = (pr.tags ?? []).filter((x) => x !== tag.id);
-                                      pr.tags = e.target.checked ? [...rest, tag.id] : rest;
-                                    })
-                                  }
+                                  type="radio"
+                                  name={`tag-${t.id}`}
+                                  checked={(t.project?.tags?.[0] ?? "") === tag.id}
+                                  onChange={() => edit((d) => void (d.right.tiles[i].project!.tags = tag.id ? [tag.id] : []))}
                                 />
                                 {tag.label.ru}
                               </label>

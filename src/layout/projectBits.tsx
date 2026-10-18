@@ -4,7 +4,7 @@ import { pick } from "../lib/pick";
 
 /** Теги: без заливки, пунктирная обводка цвета подложек (как у кнопки «Назад»). */
 export function ProjectTags({ project, locale, className = "" }: { project: Project; locale: Locale; className?: string }) {
-  const tags = PROJECT_TAGS.filter((t) => project.tags?.includes(t.id));
+  const tags = PROJECT_TAGS.filter((t) => project.tags?.[0] === t.id);
   if (!tags.length) return null;
   return (
     <ul className={`flex flex-wrap gap-1.5 ${className}`}>
