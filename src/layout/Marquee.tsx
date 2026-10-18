@@ -6,7 +6,7 @@ import { logos, type LogoItem } from "../content/logos";
  * Скорость строки в пикселях в секунду при корневом шрифте 16px (экран 1440×900).
  * На других экранах масштабируется вместе с интерфейсом (rem), чтобы ощущение не менялось.
  */
-const SPEED_PX_PER_SEC = 150;
+const SPEED_PX_PER_SEC = 100;
 
 /**
  * Строка движется не плавно, а шагами: стоит STEP_SECONDS, затем сдвигается на SPEED × STEP_SECONDS.
