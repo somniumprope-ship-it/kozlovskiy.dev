@@ -144,24 +144,31 @@ export const Stage = memo(function Stage({ right, title, locale, openId, onOpen,
     return [...real, ...Array.from({ length: pad }, (_, k) => ({ tile: null, index: real.length + k }))];
   }, [right.tiles]);
 
-  // Порядок «слева направо, сверху вниз», чтобы плитки уходили и приходили волной по рядам
-  const tilesOf = (root: HTMLElement | null) =>
+  // Плитки уходят справа налево по колонкам (крайняя правая — первой), приходят в порядке чтения
+  const tilesOf = (root: HTMLElement | null, rightFirst: boolean) =>
     root
       ? Array.from(root.querySelectorAll<HTMLElement>("[data-tile]")).sort((x, y) => {
           const a = x.getBoundingClientRect(), b = y.getBoundingClientRect();
-          return Math.round(a.top / 40) - Math.round(b.top / 40) || a.left - b.left;
+          const rows = Math.round(a.top / 40) - Math.round(b.top / 40);
+          return rightFirst ? Math.round(b.left / 20) - Math.round(a.left / 20) || a.top - b.top : rows || a.left - b.left;
         })
       : [];
+
+  // Сдвиг ровно до края сцены (а не «110% своей ширины»): иначе плитка исчезает раньше, чем доезжает, и движение «зависает»
+  const offscreen = (root: HTMLElement) => {
+    const edge = root.getBoundingClientRect().right;
+    return (_: number, el: Element) => edge - el.getBoundingClientRect().left + 8;
+  };
 
   useEffect(() => {
     if ((openTile?.id ?? null) === shownId) return;
     const el = bodyRef.current;
     if (!el) return setShownId(openTile?.id ?? null);
     const done = () => setShownId(openTile?.id ?? null);
-    const tiles = tilesOf(el);
+    const tiles = tilesOf(el, true);
     // подложка стоит на месте, плитки по очереди уезжают вправо
     const tween = tiles.length
-      ? gsap.to(tiles, { x: "110%", duration: 0.7, stagger: { amount: OUT_END - 0.7 }, ease: "power2.in", onComplete: done })
+      ? gsap.to(tiles, { x: offscreen(el), duration: 0.6, stagger: { amount: OUT_END - 0.6 }, ease: "power1.in", onComplete: done })
       : gsap.to(el, { x: "110%", duration: 0.7, ease: "power2.in", onComplete: done });
     return () => void tween.kill();
   }, [openTile, shownId]);
@@ -174,9 +181,9 @@ export const Stage = memo(function Stage({ right, title, locale, openId, onOpen,
     const el = bodyRef.current;
     if (!el) return;
     gsap.set(el, { clearProps: "transform" });
-    const tiles = tilesOf(el);
+    const tiles = tilesOf(el, false);
     // небольшая пауза, потом плитки по очереди выезжают справа
-    if (tiles.length) gsap.fromTo(tiles, { x: "110%" }, { x: 0, duration: 0.9, delay: PAUSE, stagger: { amount: 0.5 }, ease: "power3.out", clearProps: "transform" });
+    if (tiles.length) gsap.fromTo(tiles, { x: offscreen(el) }, { x: 0, duration: 0.9, delay: PAUSE, stagger: { amount: 0.5 }, ease: "power3.out", clearProps: "transform" });
     else gsap.fromTo(el, { x: "110%" }, { x: 0, duration: 0.8, delay: PAUSE, ease: "power3.out", clearProps: "transform" });
   }, [shownId]);
 
